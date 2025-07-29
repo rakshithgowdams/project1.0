@@ -1,52 +1,29 @@
 import { createClient } from '@supabase/supabase-js';
 import { GeneratedImage } from '../types';
-import { APISSLValidator } from './security';
 
 // Get environment variables with fallbacks
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Debug logging for configuration
-console.log('Supabase Configuration Check:');
-console.log('URL:', supabaseUrl ? 'Configured' : 'Missing');
-console.log('Anon Key:', supabaseAnonKey ? 'Configured' : 'Missing');
-
-// Validate SSL before creating client
-if (supabaseUrl && supabaseUrl !== 'your_supabase_url') {
-  APISSLValidator.validateSupabaseSSL(supabaseUrl).then(isValid => {
-    if (!isValid) {
-      console.error('Supabase SSL validation failed - connection may not be secure');
-    }
-  });
-}
-
 // Check if Supabase is properly configured
-if (!supabaseUrl || supabaseUrl === 'your-project-id.supabase.co' || supabaseUrl.includes('your-project-id')) {
-  console.error('❌ Supabase URL is not configured properly');
-  console.log('Please update VITE_SUPABASE_URL in your .env file with your actual Supabase project URL');
+const isSupabaseConfigured = supabaseUrl && 
+                            supabaseAnonKey && 
+                            !supabaseUrl.includes('your-project-id') && 
+                            !supabaseAnonKey.includes('your-supabase-anon-key');
+
+if (!isSupabaseConfigured) {
+  console.warn('⚠️ Supabase is not configured. Please set up your environment variables.');
 }
 
-if (!supabaseAnonKey || supabaseAnonKey === 'your-supabase-anon-key' || supabaseAnonKey.includes('your-supabase-anon-key')) {
-  console.error('❌ Supabase Anon Key is not configured properly');
-  console.log('Please update VITE_SUPABASE_ANON_KEY in your .env file with your actual Supabase anon key');
-}
-
-// Use actual values or throw error if not configured
-const validSupabaseUrl = supabaseUrl && !supabaseUrl.includes('your-project-id') 
-  ? supabaseUrl 
-  : (() => {
-      throw new Error('Supabase URL is not configured. Please set VITE_SUPABASE_URL in your .env file');
-    })();
-
-const validSupabaseKey = supabaseAnonKey && !supabaseAnonKey.includes('your-supabase-anon-key')
-  ? supabaseAnonKey
-  : (() => {
-      throw new Error('Supabase Anon Key is not configured. Please set VITE_SUPABASE_ANON_KEY in your .env file');
-    })();
-
-// Create the Supabase client with valid URLs
-export const supabase = createClient(validSupabaseUrl, validSupabaseKey);
+// Create the Supabase client with fallback values to prevent errors
+export const supabase = createClient(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabaseAnonKey || 'placeholder-key'
+);
 export const auth = supabase.auth;
+
+// Export configuration status
+export const isConfigured = isSupabaseConfigured;
 
 // ✅ Upload image to Supabase Storage
 export const uploadImageToStorage = async (imageUrl: string, fileName: string) => {
@@ -84,7 +61,7 @@ export const uploadImageToStorage = async (imageUrl: string, fileName: string) =
 // ✅ Sign up function
 export const signUp = async (email: string, password: string, username: string) => {
   // Check if Supabase is properly configured
-  if (!supabaseUrl || supabaseUrl.includes('your-project-id') || supabaseUrl === 'https://your-project-id.supabase.co') {
+  if (!isSupabaseConfigured) {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
@@ -110,7 +87,7 @@ export const signUp = async (email: string, password: string, username: string) 
 // ✅ Sign in function
 export const signIn = async (email: string, password: string) => {
   // Check if Supabase is properly configured
-  if (!supabaseUrl || supabaseUrl.includes('your-project-id') || supabaseUrl === 'https://your-project-id.supabase.co') {
+  if (!isSupabaseConfigured) {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
@@ -132,7 +109,7 @@ export const signOut = async () => {
 // ✅ Google Sign In function
 export const signInWithGoogle = async () => {
   // Check if Supabase is properly configured
-  if (!supabaseUrl || supabaseUrl.includes('your-project-id') || supabaseUrl === 'https://your-project-id.supabase.co') {
+  if (!isSupabaseConfigured) {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
@@ -173,7 +150,7 @@ export const saveGeneratedImage = async (
   safetyFilterLevel: string = 'block_medium_and_above'
 ) => {
   // Check if Supabase is properly configured
-  if (!supabaseUrl || supabaseUrl.includes('your-project-id')) {
+  if (!isSupabaseConfigured) {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
@@ -234,7 +211,7 @@ export const saveGeneratedImage = async (
 // ✅ Get user's image history
 export const getUserImages = async () => {
   // Check if Supabase is properly configured
-  if (!supabaseUrl || supabaseUrl.includes('your-project-id')) {
+  if (!isSupabaseConfigured) {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
@@ -254,7 +231,7 @@ export const getUserImages = async () => {
 // ✅ Get all public images for explore section
 export const getExploreImages = async () => {
   // Check if Supabase is properly configured
-  if (!supabaseUrl || supabaseUrl.includes('your-project-id')) {
+  if (!isSupabaseConfigured) {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 

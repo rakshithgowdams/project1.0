@@ -153,6 +153,11 @@ export class APISSLValidator {
   // Validate Supabase SSL
   static async validateSupabaseSSL(supabaseUrl: string): Promise<boolean> {
     try {
+      // Skip validation for placeholder URLs
+      if (!supabaseUrl || supabaseUrl.includes('your-project-id') || supabaseUrl === 'https://placeholder.supabase.co') {
+        return false;
+      }
+      
       const url = new URL(supabaseUrl);
       if (url.protocol !== 'https:') {
         console.error('Supabase URL must use HTTPS');
@@ -168,7 +173,10 @@ export class APISSLValidator {
       
       return response.status !== 0; // 0 indicates SSL/network error
     } catch (error) {
-      console.error('Supabase SSL validation failed:', error);
+      // Only log actual SSL errors, not configuration issues
+      if (!supabaseUrl.includes('placeholder')) {
+        console.error('Supabase SSL validation failed:', error);
+      }
       return false;
     }
   }

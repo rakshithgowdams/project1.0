@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabase } from './lib/supabase';
+import { supabase, isConfigured } from './lib/supabase';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
@@ -16,14 +16,6 @@ export default function App() {
 
   useEffect(() => {
     // Check if Supabase is configured
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    
-    const isConfigured = supabaseUrl && 
-                        supabaseKey && 
-                        !supabaseUrl.includes('your-project-id') && 
-                        !supabaseKey.includes('your-supabase-anon-key');
-    
     setSupabaseConfigured(isConfigured);
     
     if (!isConfigured) {

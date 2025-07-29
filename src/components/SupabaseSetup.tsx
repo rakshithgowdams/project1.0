@@ -97,7 +97,7 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
                 <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-red-700 text-sm font-medium">
                     <strong>Current Issue:</strong> The API key in your .env file is invalid. 
-                    Double-check that you copied the exact "anon/public" key from your Supabase dashboard.
+                    Double-check that you copied the exact "anon/public\" key from your Supabase dashboard.
                   </p>
                 </div>
               </div>

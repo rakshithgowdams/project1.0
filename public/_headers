@@ -1,0 +1,27 @@
+/*
+  # SSL/TLS Security Headers
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  
+  # SSL Certificate Security
+  Content-Security-Policy: default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://accounts.google.com https://www.gstatic.com https://ssl.gstatic.com https://generativelanguage.googleapis.com https://*.supabase.co https://*.supabase.io https://replicate.com https://*.replicate.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://apis.google.com https://accounts.google.com https://generativelanguage.googleapis.com https://*.supabase.co https://*.supabase.io https://replicate.com https://*.replicate.com https://pbxt.replicate.delivery https://replicate.delivery; frame-src 'self' https://accounts.google.com; object-src 'none'; base-uri 'self';
+  
+  # SSL Certificate Transparency
+  Expect-CT: max-age=86400, enforce
+  
+  # Feature Policy
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), speaker=(), vibrate=(), fullscreen=(self), sync-xhr=()
+
+# Cache static assets with SSL verification
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+# API routes with enhanced SSL security
+/api/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY

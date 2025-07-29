@@ -1,0 +1,58 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# SSL/TLS Security Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Force HTTPS - Redirect all HTTP to HTTPS
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    
+    # SSL Certificate Security
+    Content-Security-Policy = "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://accounts.google.com https://www.gstatic.com https://ssl.gstatic.com https://generativelanguage.googleapis.com https://*.supabase.co https://*.supabase.io https://replicate.com https://*.replicate.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://apis.google.com https://accounts.google.com https://generativelanguage.googleapis.com https://*.supabase.co https://*.supabase.io https://replicate.com https://*.replicate.com https://pbxt.replicate.delivery https://replicate.delivery; frame-src 'self' https://accounts.google.com; object-src 'none'; base-uri 'self';"
+    
+    # SSL Certificate Validation
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    
+    # SSL Certificate Transparency
+    Expect-CT = "max-age=86400, enforce"
+    
+    # SSL Certificate Authority Authorization
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    
+    # SSL Certificate Pinning (Optional - for enhanced security)
+    Public-Key-Pins = "pin-sha256=\"base64+primary==\"; pin-sha256=\"base64+backup==\"; max-age=5184000; includeSubDomains"
+    
+    # Feature Policy for SSL
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), speaker=(), vibrate=(), fullscreen=(self), sync-xhr=()"
+
+# Force HTTPS redirects
+[[redirects]]
+  from = "http://mydesignnexus.in/*"
+  to = "https://mydesignnexus.in/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.mydesignnexus.in/*"
+  to = "https://mydesignnexus.in/:splat"
+  status = 301
+  force = true
+
+# SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# SSL Certificate Auto-renewal settings
+[context.production.environment]
+  SSL_CERT_AUTO_RENEW = "true"
+  SSL_CERT_PROVIDER = "letsencrypt"
+  SSL_CERT_VALIDATION = "dns"

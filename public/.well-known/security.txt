@@ -1,0 +1,6 @@
+Contact: mailto:security@mydesignnexus.in
+Expires: 2025-12-31T23:59:59.000Z
+Encryption: https://mydesignnexus.in/.well-known/pgp-key.txt
+Preferred-Languages: en
+Canonical: https://mydesignnexus.in/.well-known/security.txt
+Policy: https://mydesignnexus.in/security-policy

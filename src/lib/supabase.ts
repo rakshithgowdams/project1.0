@@ -1,9 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 import { GeneratedImage } from '../types';
+import { APISSLValidator } from './security';
 
 // Get environment variables with fallbacks
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Validate SSL before creating client
+if (supabaseUrl && supabaseUrl !== 'your_supabase_url') {
+  APISSLValidator.validateSupabaseSSL(supabaseUrl).then(isValid => {
+    if (!isValid) {
+      console.error('Supabase SSL validation failed - connection may not be secure');
+    }
+  });
+}
 
 // Provide valid fallback values to prevent URL constructor errors
 const validSupabaseUrl = supabaseUrl && supabaseUrl !== 'your_supabase_url' 

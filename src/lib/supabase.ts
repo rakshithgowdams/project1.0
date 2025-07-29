@@ -105,12 +105,16 @@ export const signInWithGoogle = async () => {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
-  // Get Google OAuth credentials
+  // Get Google OAuth credentials from environment variables
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const googleClientSecret = import.meta.env.VITE_GOOGLE_CLIENT_SECRET;
   
-  if (!googleClientId || googleClientId === 'your_google_client_id') {
-    throw new Error('Google OAuth is not configured. Please set VITE_GOOGLE_CLIENT_ID in your environment variables.');
+  if (!googleClientId || googleClientId === 'your_google_client_id' || !googleClientSecret || googleClientSecret === 'your_google_client_secret') {
+    throw new Error('Google OAuth is not configured. Please set VITE_GOOGLE_CLIENT_ID and VITE_GOOGLE_CLIENT_SECRET in your environment variables.');
   }
+
+  console.log('Using Google Client ID from .env:', googleClientId);
+  console.log('Google Client Secret configured:', googleClientSecret ? 'Yes' : 'No');
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',

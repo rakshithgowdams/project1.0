@@ -6,6 +6,11 @@ import { APISSLValidator } from './security';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+// Debug logging for configuration
+console.log('Supabase Configuration Check:');
+console.log('URL:', supabaseUrl ? 'Configured' : 'Missing');
+console.log('Anon Key:', supabaseAnonKey ? 'Configured' : 'Missing');
+
 // Validate SSL before creating client
 if (supabaseUrl && supabaseUrl !== 'your_supabase_url') {
   APISSLValidator.validateSupabaseSSL(supabaseUrl).then(isValid => {
@@ -15,14 +20,29 @@ if (supabaseUrl && supabaseUrl !== 'your_supabase_url') {
   });
 }
 
-// Provide valid fallback values to prevent URL constructor errors
-const validSupabaseUrl = supabaseUrl && supabaseUrl !== 'your_supabase_url' 
-  ? supabaseUrl 
-  : 'https://placeholder.supabase.co';
+// Check if Supabase is properly configured
+if (!supabaseUrl || supabaseUrl === 'your-project-id.supabase.co' || supabaseUrl.includes('your-project-id')) {
+  console.error('❌ Supabase URL is not configured properly');
+  console.log('Please update VITE_SUPABASE_URL in your .env file with your actual Supabase project URL');
+}
 
-const validSupabaseKey = supabaseAnonKey && supabaseAnonKey !== 'your_supabase_anon_key'
+if (!supabaseAnonKey || supabaseAnonKey === 'your-supabase-anon-key' || supabaseAnonKey.includes('your-supabase-anon-key')) {
+  console.error('❌ Supabase Anon Key is not configured properly');
+  console.log('Please update VITE_SUPABASE_ANON_KEY in your .env file with your actual Supabase anon key');
+}
+
+// Use actual values or throw error if not configured
+const validSupabaseUrl = supabaseUrl && !supabaseUrl.includes('your-project-id') 
+  ? supabaseUrl 
+  : (() => {
+      throw new Error('Supabase URL is not configured. Please set VITE_SUPABASE_URL in your .env file');
+    })();
+
+const validSupabaseKey = supabaseAnonKey && !supabaseAnonKey.includes('your-supabase-anon-key')
   ? supabaseAnonKey
-  : 'placeholder-key';
+  : (() => {
+      throw new Error('Supabase Anon Key is not configured. Please set VITE_SUPABASE_ANON_KEY in your .env file');
+    })();
 
 // Create the Supabase client with valid URLs
 export const supabase = createClient(validSupabaseUrl, validSupabaseKey);
@@ -64,7 +84,7 @@ export const uploadImageToStorage = async (imageUrl: string, fileName: string) =
 // ✅ Sign up function
 export const signUp = async (email: string, password: string, username: string) => {
   // Check if Supabase is properly configured
-  if (!supabaseUrl || supabaseUrl === 'your_supabase_url' || supabaseUrl.includes('placeholder')) {
+  if (!supabaseUrl || supabaseUrl.includes('your-project-id') || supabaseUrl === 'https://your-project-id.supabase.co') {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
@@ -90,7 +110,7 @@ export const signUp = async (email: string, password: string, username: string) 
 // ✅ Sign in function
 export const signIn = async (email: string, password: string) => {
   // Check if Supabase is properly configured
-  if (!supabaseUrl || supabaseUrl === 'your_supabase_url' || supabaseUrl.includes('placeholder')) {
+  if (!supabaseUrl || supabaseUrl.includes('your-project-id') || supabaseUrl === 'https://your-project-id.supabase.co') {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
@@ -112,7 +132,7 @@ export const signOut = async () => {
 // ✅ Google Sign In function
 export const signInWithGoogle = async () => {
   // Check if Supabase is properly configured
-  if (!supabaseUrl || supabaseUrl === 'your_supabase_url' || supabaseUrl.includes('placeholder')) {
+  if (!supabaseUrl || supabaseUrl.includes('your-project-id') || supabaseUrl === 'https://your-project-id.supabase.co') {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
@@ -152,6 +172,11 @@ export const saveGeneratedImage = async (
   outputFormat: string = 'png',
   safetyFilterLevel: string = 'block_medium_and_above'
 ) => {
+  // Check if Supabase is properly configured
+  if (!supabaseUrl || supabaseUrl.includes('your-project-id')) {
+    throw new Error('Supabase is not configured. Please set up your Supabase project first.');
+  }
+
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError) throw userError;
   if (!user) throw new Error('User not authenticated');
@@ -208,6 +233,11 @@ export const saveGeneratedImage = async (
 
 // ✅ Get user's image history
 export const getUserImages = async () => {
+  // Check if Supabase is properly configured
+  if (!supabaseUrl || supabaseUrl.includes('your-project-id')) {
+    throw new Error('Supabase is not configured. Please set up your Supabase project first.');
+  }
+
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError) throw userError;
   if (!user) throw new Error('User not authenticated');
@@ -223,6 +253,11 @@ export const getUserImages = async () => {
 
 // ✅ Get all public images for explore section
 export const getExploreImages = async () => {
+  // Check if Supabase is properly configured
+  if (!supabaseUrl || supabaseUrl.includes('your-project-id')) {
+    throw new Error('Supabase is not configured. Please set up your Supabase project first.');
+  }
+
   const { data, error } = await supabase
     .from('generated_images')
     .select('*')

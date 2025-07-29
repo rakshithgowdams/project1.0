@@ -4,34 +4,69 @@ import { supabase } from './lib/supabase';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
+import SupabaseSetup from './components/SupabaseSetup';
 import { ImageGenerator } from './components/ImageGenerator';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showSupabaseSetup, setShowSupabaseSetup] = useState(false);
+  const [supabaseConfigured, setSupabaseConfigured] = useState(false);
 
   useEffect(() => {
+    // Check if Supabase is configured
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    
+    const isConfigured = supabaseUrl && 
+                        supabaseKey && 
+                        !supabaseUrl.includes('your-project-id') && 
+                        !supabaseKey.includes('your-supabase-anon-key');
+    
+    setSupabaseConfigured(isConfigured);
+    
+    if (!isConfigured) {
+      setShowSupabaseSetup(true);
+      setLoading(false);
+      return;
+    }
+
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    try {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      });
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+      // Listen for auth changes
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      });
 
-    return () => subscription.unsubscribe();
+      return () => subscription.unsubscribe();
+    } catch (error) {
+      console.error('Supabase initialization error:', error);
+      setShowSupabaseSetup(true);
+      setLoading(false);
+    }
   }, []);
 
   const handleAuthSuccess = () => {
     setShowAuthModal(false);
   };
+
+  // Show Supabase setup modal if not configured
+  if (showSupabaseSetup) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <SupabaseSetup onClose={() => setShowSupabaseSetup(false)} />
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -46,9 +81,9 @@ export default function App() {
       <Header user={user} onAuthClick={() => setShowAuthModal(true)} />
       
       <main className="flex-1">
-        {user ? (
+        {supabaseConfigured && user ? (
           <ImageGenerator />
-        ) : (
+        ) : supabaseConfigured ? (
           <div className="max-w-4xl mx-auto px-4 py-16 text-center">
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-xl border border-white/20">
               <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl mx-auto mb-8 flex items-center justify-center">
@@ -103,16 +138,38 @@ export default function App() {
               </div>
             </div>
           </div>
+        ) : (
+          <div className="max-w-4xl mx-auto px-4 py-16 text-center">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-xl border border-white/20">
+              <div className="w-20 h-20 bg-red-100 rounded-2xl mx-auto mb-8 flex items-center justify-center">
+                <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                Supabase Configuration Required
+              </h2>
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                Please configure your Supabase project to enable authentication and database functionality.
+              </p>
+              <button
+                onClick={() => setShowSupabaseSetup(true)}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
+                Setup Supabase
+              </button>
+            </div>
+          </div>
         )}
       </main>
 
       <Footer />
 
-      <AuthModal
+      {supabaseConfigured && <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onSuccess={handleAuthSuccess}
-      />
+      />}
     </div>
   );
 }

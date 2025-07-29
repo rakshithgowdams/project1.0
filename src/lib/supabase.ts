@@ -1,27 +1,45 @@
 import { createClient } from '@supabase/supabase-js';
 import { GeneratedImage } from '../types';
 
-// Get environment variables with fallbacks
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Get environment variables
+const envSupabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const envSupabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Validate and set URL - ensure it's a valid URL format
+const isValidUrl = (url: string) => {
+  try {
+    new URL(url);
+    return url.startsWith('https://') && url.includes('.supabase.co');
+  } catch {
+    return false;
+  }
+};
+
+// Use valid URL or fallback to placeholder
+const supabaseUrl = (envSupabaseUrl && isValidUrl(envSupabaseUrl)) 
+  ? envSupabaseUrl 
+  : 'https://placeholder.supabase.co';
+
+// Use valid key or fallback to placeholder
+const supabaseAnonKey = (envSupabaseAnonKey && 
+                        envSupabaseAnonKey !== 'your_supabase_anon_key' && 
+                        envSupabaseAnonKey.length > 20) 
+  ? envSupabaseAnonKey 
+  : 'placeholder-key';
 
 // Check if Supabase is properly configured
-const isSupabaseConfigured = supabaseUrl && 
-                            supabaseAnonKey && 
-                            !supabaseUrl.includes('your_supabase_url_here') && 
-                            !supabaseAnonKey.includes('your_supabase_anon_key_here') &&
-                            supabaseUrl.startsWith('https://') &&
-                            supabaseUrl.includes('.supabase.co');
+const isSupabaseConfigured = envSupabaseUrl && 
+                            envSupabaseAnonKey && 
+                            isValidUrl(envSupabaseUrl) &&
+                            envSupabaseAnonKey !== 'your_supabase_anon_key' &&
+                            envSupabaseAnonKey.length > 20;
 
 if (!isSupabaseConfigured) {
   console.warn('⚠️ Supabase is not configured. Please set up your environment variables.');
 }
 
-// Create the Supabase client with fallback values to prevent errors
-export const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key'
-);
+// Create the Supabase client with validated values
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const auth = supabase.auth;
 
 // Export configuration status

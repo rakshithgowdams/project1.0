@@ -8,8 +8,10 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 // Check if Supabase is properly configured
 const isSupabaseConfigured = supabaseUrl && 
                             supabaseAnonKey && 
-                            !supabaseUrl.includes('your-project-id') && 
-                            !supabaseAnonKey.includes('your-supabase-anon-key');
+                            !supabaseUrl.includes('your_supabase_url_here') && 
+                            !supabaseAnonKey.includes('your_supabase_anon_key_here') &&
+                            supabaseUrl.startsWith('https://') &&
+                            supabaseUrl.includes('.supabase.co');
 
 if (!isSupabaseConfigured) {
   console.warn('⚠️ Supabase is not configured. Please set up your environment variables.');

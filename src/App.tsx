@@ -24,27 +24,39 @@ export default function App() {
       return;
     }
 
-    // Get initial session
-    try {
-      supabase.auth.getSession().then(({ data: { session } }) => {
+    // Get initial session with error handling
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Supabase auth error:', error);
+          if (error.message.includes('Invalid API key')) {
+            setShowSupabaseSetup(true);
+            setLoading(false);
+            return;
+          }
+        }
+        
         setUser(session?.user ?? null);
         setLoading(false);
-      });
 
-      // Listen for auth changes
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user ?? null);
+        // Listen for auth changes
+        const {
+          data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+          setUser(session?.user ?? null);
+        });
+
+        return () => subscription.unsubscribe();
+      } catch (error) {
+        console.error('Supabase initialization error:', error);
+        setShowSupabaseSetup(true);
         setLoading(false);
-      });
+      }
+    };
 
-      return () => subscription.unsubscribe();
-    } catch (error) {
-      console.error('Supabase initialization error:', error);
-      setShowSupabaseSetup(true);
-      setLoading(false);
-    }
+    initializeAuth();
   }, []);
 
   const handleAuthSuccess = () => {

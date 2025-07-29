@@ -29,10 +29,10 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-6 w-6 text-amber-600 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold text-amber-800 mb-2">Configuration Required</h3>
+                <h3 className="font-semibold text-amber-800 mb-2">Invalid Supabase Configuration</h3>
                 <p className="text-amber-700">
-                  Your Supabase project needs to be configured before you can use the application. 
-                  Please follow the steps below to set up your database and authentication.
+                  The Supabase API key in your .env file is invalid or incorrect. 
+                  Please follow the steps below to get the correct credentials from your Supabase project.
                 </p>
               </div>
             </div>
@@ -91,7 +91,14 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
                     <div>VITE_SUPABASE_URL=https://your-project-id.supabase.co</div>
                     <div className="mt-2"><span className="text-gray-500"># Replace with your actual Supabase anon key</span></div>
                     <div>VITE_SUPABASE_ANON_KEY=your-supabase-anon-key</div>
+                    <div className="mt-2"><span className="text-red-400"># ⚠️ Make sure there are no typos or extra spaces!</span></div>
                   </div>
+                </div>
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-700 text-sm font-medium">
+                    <strong>Current Issue:</strong> The API key in your .env file is invalid. 
+                    Double-check that you copied the exact "anon/public" key from your Supabase dashboard.
+                  </p>
                 </div>
               </div>
             </div>

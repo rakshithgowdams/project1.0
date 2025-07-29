@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Download, Copy, Trash2, Eye, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Clock, Download, Copy, Eye, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getUserImages, getExploreImages } from '../lib/supabase';
 import { GeneratedImage } from '../types';
 

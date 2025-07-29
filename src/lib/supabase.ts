@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { GeneratedImage } from '../types';
 
 // Get environment variables with fallbacks
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;

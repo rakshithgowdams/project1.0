@@ -560,6 +560,5 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
         </div>
       </div>
     </>
-    </div>
   );
 };

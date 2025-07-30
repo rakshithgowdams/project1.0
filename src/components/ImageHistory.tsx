@@ -272,8 +272,8 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
                   : `${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'}`
               }`}
             >
-              📚 Your Library
-            </button>
+              Your Library
+              {/*</button>
             <button
               onClick={() => {
                 setActiveTab('explore');
@@ -285,8 +285,8 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
                   : `${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'}`
               }`}
             >
-              🌍 Explore
-            </button>
+            Explore
+            </button>*/}
           </div>
         </div>
 

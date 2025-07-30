@@ -89,6 +89,7 @@ export default function Sidebar({
             </button>
           </div>
         </div>
+        </div>
 
         {/* Navigation Menu */}
         <div className="flex-1 p-4 lg:p-6 overflow-y-auto">

@@ -254,7 +254,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
           Create Stunning Images with
           <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block sm:inline"> AI Magic</span>
         </h1>
-        <p className={`text-lg lg:text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'} max-w-3xl mx-auto`}>
+        <p className={`text-lg lg:text-xl ${isDark ? 'text-white-300' : 'text-gray-600'} max-w-3xl mx-auto`}>
           Transform your imagination into reality. Describe what you want to see, and our AI will create it for you in seconds.
         </p>
         

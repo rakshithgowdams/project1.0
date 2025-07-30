@@ -11,7 +11,7 @@ export const enhancePrompt = async (originalPrompt: string): Promise<string> => 
   const chatHistory = [];
   chatHistory.push({
     role: "user", 
-    parts: [{ text: `[MDN 1.O Advance Model] Enhance the following image generation prompt for better results, making it more descriptive and creative, suitable for a text-to-image model. Add artistic details, lighting, composition, and quality terms. Do not include any conversational text, just the enhanced prompt itself. Example: "A cat" -> "A fluffy orange cat sitting on a windowsill, with bright green eyes, in a cozy sunlit room, highly detailed, photorealistic, professional photography, soft natural lighting, 8k resolution."\n\nOriginal prompt: "${originalPrompt}"` }]
+    parts: [{ text: `Enhance the following image generation prompt for better results, making it more descriptive and creative, suitable for a text-to-image model. Add artistic details, lighting, composition, and quality terms. Do not include any conversational text, just the enhanced prompt itself. Example: "A cat" -> "A fluffy orange cat sitting on a windowsill, with bright green eyes, in a cozy sunlit room, highly detailed, photorealistic, professional photography, soft natural lighting, 8k resolution."\n\nOriginal prompt: "${originalPrompt}"` }]
   });
 
   const payload = { contents: chatHistory };

@@ -48,9 +48,6 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
                 <p className="text-gray-600 mb-3">
                   Go to Supabase and create a new project if you haven't already.
                 </p>
-                <a
-                  <span>Open Supabase Dashboard</span>
-                </a>
               </div>
             </div>
 

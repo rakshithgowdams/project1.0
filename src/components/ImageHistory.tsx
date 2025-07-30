@@ -272,9 +272,9 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
                   : `${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'}`
               }`}
             >
-              Your Librar
+              Your Library         
             </button>
-            <button
+            {/*<button
               onClick={() => {
                 setActiveTab('explore');
                 setCurrentPage(1); // Reset to first page
@@ -286,7 +286,7 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
               }`}
             >
               Explore
-            </button>
+            </button>*/}
           </div>
         </div>
 

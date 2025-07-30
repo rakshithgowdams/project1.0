@@ -8,6 +8,7 @@ import ErrorModal from './ErrorModal';
 import Sidebar from './Sidebar';
 import ExplorePage from './ExplorePage';
 import SettingsPage from './SettingsPage';
+import ImageHistory from './ImageHistory';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface ImageGeneratorProps {
@@ -204,11 +205,11 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
 
   // Handle page changes
   if (currentPage === 'explore') {
-    return <ExplorePage onBack={() => setCurrentPage('generate')} />;
+    return <ExplorePage onBack={() => setCurrentPage('generate')} generatedCount={generatedCount} maxGenerations={MAX_GENERATIONS} />;
   }
 
   if (currentPage === 'settings') {
-    return <SettingsPage onBack={() => setCurrentPage('generate')} />;
+    return <SettingsPage onBack={() => setCurrentPage('generate')} generatedCount={generatedCount} maxGenerations={MAX_GENERATIONS} />;
   }
 
   return (
@@ -490,9 +491,9 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
 
       {/* Generated Image Display */}
       {generatedImage && (
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/20">
+        <div className={`${isDark ? 'bg-gray-800/80 border-gray-700' : 'bg-white/80 border-white/20'} backdrop-blur-sm rounded-3xl p-8 shadow-2xl border`}>
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center justify-center space-x-2">
+            <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-6 flex items-center justify-center space-x-2`}>
               <span>✨ Your AI Creation</span>
             </h3>
             <div className="relative inline-block group">
@@ -519,24 +520,24 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
               </div>
             </div>
             
-            <div className="mt-6 p-6 bg-gray-50/80 backdrop-blur-sm rounded-2xl border border-gray-200/50">
+            <div className={`mt-6 p-6 ${isDark ? 'bg-gray-700/80 border-gray-600/50' : 'bg-gray-50/80 border-gray-200/50'} backdrop-blur-sm rounded-2xl border`}>
               <div className="text-left space-y-2">
-                <p className="text-sm text-gray-600">
-                  <span className="font-semibold text-gray-800">Prompt:</span> {prompt.length > 200 ? prompt.substring(0, 200) + '...' : prompt}
+                <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                  <span className={`font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Prompt:</span> {prompt.length > 200 ? prompt.substring(0, 200) + '...' : prompt}
                 </p>
                 {selectedStyle && (
-                  <p className="text-sm text-gray-600">
-                    <span className="font-semibold text-gray-800">Style:</span> {stylePresets.find(s => s.id === selectedStyle)?.name}
+                  <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <span className={`font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Style:</span> {stylePresets.find(s => s.id === selectedStyle)?.name}
                   </p>
                 )}
-                <p className="text-sm text-gray-600">
-                  <span className="font-semibold text-gray-800">Aspect Ratio:</span> {selectedAspectRatio}
+                <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                  <span className={`font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Aspect Ratio:</span> {selectedAspectRatio}
                 </p>
-                <p className="text-sm text-gray-600">
-                  <span className="font-semibold text-gray-800">Format:</span> {selectedOutputFormat.toUpperCase()}
+                <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                  <span className={`font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Format:</span> {selectedOutputFormat.toUpperCase()}
                 </p>
-                <p className="text-sm text-gray-600">
-                  <span className="font-semibold text-gray-800">Safety Filter:</span> {selectedSafetyFilter.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                  <span className={`font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Safety Filter:</span> {selectedSafetyFilter.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                 </p>
               </div>
             </div>
@@ -545,11 +546,11 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
       )}
 
       {/* Pro Tips */}
-      <div className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 rounded-3xl p-8 border border-blue-100">
-        <h4 className="font-bold text-gray-900 mb-4 text-xl flex items-center space-x-2">
+      <div className={`mt-8 ${isDark ? 'bg-gradient-to-r from-gray-800 to-gray-700 border-gray-600' : 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-100'} rounded-3xl p-8 border`}>
+        <h4 className={`font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4 text-xl flex items-center space-x-2`}>
           <span>Pro Tips for Amazing Results</span>
         </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
           <div className="space-y-2">
             <p>• <strong>Be descriptive:</strong> Write detailed, vivid descriptions for better results</p>
             <p>• <strong>Use the Magic Prompt:</strong> Let MDN 1.O Advance enhance your ideas</p>
@@ -562,6 +563,9 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
           </div>
         </div>
       </div>
+
+      {/* Image Library */}
+      <ImageHistory />
 
       {/* Copy Success Notification */}
       {showCopySuccess && (

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Download, Copy, Eye, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Clock, Download, Copy, Eye, X, ChevronLeft, ChevronRight, User } from 'lucide-react';
 import { getUserImages, getExploreImages } from '../lib/supabase';
 import { GeneratedImage } from '../types';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface ImageHistoryProps {
   onImageSelect?: (image: GeneratedImage) => void;
 }
 
 export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
+  const { isDark } = useTheme();
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -206,10 +208,10 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
 
   if (loading) {
     return (
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/20">
+      <div className={`${isDark ? 'bg-gray-800/80 border-gray-700' : 'bg-white/80 border-white/20'} backdrop-blur-sm rounded-3xl p-8 shadow-2xl border`}>
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-3 text-gray-600">Loading your creations...</span>
+          <span className={`ml-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Loading your creations...</span>
         </div>
       </div>
     );
@@ -217,10 +219,10 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
 
   if (error) {
     return (
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/20">
+      <div className={`${isDark ? 'bg-gray-800/80 border-gray-700' : 'bg-white/80 border-white/20'} backdrop-blur-sm rounded-3xl p-8 shadow-2xl border`}>
         <div className="text-center py-12">
           <div className="text-red-500 mb-4">Error loading images</div>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-4`}>{error}</p>
           <button
             onClick={loadImages}
             className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
@@ -234,15 +236,15 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
 
   if (images.length === 0) {
     return (
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/20">
+      <div className={`${isDark ? 'bg-gray-800/80 border-gray-700' : 'bg-white/80 border-white/20'} backdrop-blur-sm rounded-3xl p-8 shadow-2xl border`}>
         <div className="text-center py-12">
-          <div className="w-16 h-16 bg-gray-100 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-            <Clock className="h-8 w-8 text-gray-400" />
+          <div className={`w-16 h-16 ${isDark ? 'bg-gray-700' : 'bg-gray-100'} rounded-2xl mx-auto mb-4 flex items-center justify-center`}>
+            <Clock className={`h-8 w-8 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
             {activeTab === 'library' ? 'No Images Yet' : 'No Community Images'}
           </h3>
-          <p className="text-gray-600">
+          <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
             {activeTab === 'library' 
               ? 'Your generated images will appear here once you create them.'
               : 'Community images will appear here as users share their creations.'
@@ -255,10 +257,10 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
 
   return (
     <>
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/20">
+      <div className={`${isDark ? 'bg-gray-800/80 border-gray-700' : 'bg-white/80 border-white/20'} backdrop-blur-sm rounded-3xl p-8 shadow-2xl border`}>
         {/* Tab Navigation - Always visible */}
         <div className="flex items-center justify-center mb-8">
-          <div className="bg-gray-100 p-1 rounded-2xl flex">
+          <div className={`${isDark ? 'bg-gray-700' : 'bg-gray-100'} p-1 rounded-2xl flex`}>
             <button
               onClick={() => {
                 setActiveTab('library');
@@ -266,8 +268,8 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
               }}
               className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
                 activeTab === 'library'
-                  ? 'bg-white text-blue-600 shadow-lg'
-                  : 'text-gray-600 hover:text-gray-800'
+                  ? `${isDark ? 'bg-gray-800 text-blue-400' : 'bg-white text-blue-600'} shadow-lg`
+                  : `${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'}`
               }`}
             >
               📚 Your Library
@@ -279,8 +281,8 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
               }}
               className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
                 activeTab === 'explore'
-                  ? 'bg-white text-blue-600 shadow-lg'
-                  : 'text-gray-600 hover:text-gray-800'
+                  ? `${isDark ? 'bg-gray-800 text-blue-400' : 'bg-white text-blue-600'} shadow-lg`
+                  : `${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'}`
               }`}
             >
               🌍 Explore
@@ -290,8 +292,8 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
 
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2">
-            <Clock className="h-6 w-6 text-gray-700" />
-            <h2 className="text-2xl font-bold text-gray-900">
+            <Clock className={`h-6 w-6 ${isDark ? 'text-gray-300' : 'text-gray-700'}`} />
+            <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
               {activeTab === 'library' ? 'Your Creations' : 'Community Creations'}
             </h2>
             <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded-full">
@@ -300,7 +302,7 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
           </div>
           
           {totalPages > 1 && (
-            <div className="text-sm text-gray-600">
+            <div className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
               Page {currentPage} of {totalPages}
             </div>
           )}
@@ -310,15 +312,15 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
           {currentImages.map((image) => (
             <div
               key={image.id}
-              className="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
+              className={`group relative ${isDark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-100'} rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border`}
             >
               <div className="aspect-square relative overflow-hidden">
                 {/* Loading Animation */}
                 {imageLoadingStates[image.id] && (
-                  <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+                  <div className={`absolute inset-0 ${isDark ? 'bg-gray-800' : 'bg-gray-100'} flex items-center justify-center`}>
                     <div className="flex flex-col items-center space-y-3">
                       <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"></div>
-                      <div className="text-sm text-gray-500 font-medium">Loading...</div>
+                      <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'} font-medium`}>Loading...</div>
                     </div>
                   </div>
                 )}
@@ -364,16 +366,24 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
 
               {/* Image info */}
               <div className="p-4">
-                <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                <div className="flex items-center space-x-2 mb-2">
+                  <div className={`p-1 ${isDark ? 'bg-gray-600' : 'bg-gray-100'} rounded-full`}>
+                    <User className={`h-3 w-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`} />
+                  </div>
+                  <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    Generated by You
+                  </span>
+                </div>
+                <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'} line-clamp-2 mb-2`}>
                   {image.prompt}
                 </p>
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className={`flex items-center justify-between text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                   <span>{formatDate(image.created_at)}</span>
                   <div className="flex items-center space-x-1">
-                    <span className="bg-gray-100 px-2 py-1 rounded">
+                    <span className={`${isDark ? 'bg-gray-600' : 'bg-gray-100'} px-2 py-1 rounded`}>
                       {image.aspect_ratio}
                     </span>
-                    <span className="bg-gray-100 px-2 py-1 rounded uppercase">
+                    <span className={`${isDark ? 'bg-gray-600' : 'bg-gray-100'} px-2 py-1 rounded uppercase`}>
                       {image.output_format}
                     </span>
                   </div>
@@ -389,7 +399,7 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
             <button
               onClick={goToPrevPage}
               disabled={currentPage === 1}
-              className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`flex items-center space-x-2 px-4 py-2 ${isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <ChevronLeft className="h-4 w-4" />
               <span>Previous</span>
@@ -403,7 +413,7 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
                   className={`w-10 h-10 rounded-lg font-medium transition-colors ${
                     currentPage === page
                       ? 'bg-blue-500 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : `${isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`
                   }`}
                 >
                   {page}
@@ -414,7 +424,7 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
             <button
               onClick={goToNextPage}
               disabled={currentPage === totalPages}
-              className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`flex items-center space-x-2 px-4 py-2 ${isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <span>Next</span>
               <ChevronRight className="h-4 w-4" />
@@ -426,12 +436,12 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
       {/* Image Detail Modal */}
       {selectedImage && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-gray-900">Image Details</h3>
+          <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto`}>
+            <div className={`sticky top-0 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b p-4 flex items-center justify-between`}>
+              <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Image Details</h3>
               <button
                 onClick={() => setSelectedImage(null)}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                className={`p-2 ${isDark ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'} rounded-lg transition-colors`}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -456,7 +466,7 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
                     </button>
                     <button
                       onClick={() => copyToClipboard(selectedImage.image_url)}
-                      className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
+                      className={`flex-1 ${isDark ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'} py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2`}
                     >
                       <Copy className="h-5 w-5" />
                       <span>Copy URL</span>
@@ -526,12 +536,12 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
                 {/* Details */}
                 <div className="space-y-6">
                   <div>
-                    <label className="text-sm font-semibold text-gray-700 mb-2 block">Prompt</label>
-                    <div className="bg-gray-50 p-4 rounded-xl border">
-                      <p className="text-gray-800">{selectedImage.prompt}</p>
+                    <label className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2 block`}>Prompt</label>
+                    <div className={`${isDark ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'} p-4 rounded-xl border`}>
+                      <p className={isDark ? 'text-gray-200' : 'text-gray-800'}>{selectedImage.prompt}</p>
                       <button
                         onClick={() => copyPromptToClipboard(selectedImage.prompt)}
-                        className="mt-2 text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center space-x-1"
+                        className={`mt-2 ${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'} text-sm font-medium flex items-center space-x-1`}
                       >
                         <Copy className="h-4 w-4" />
                         <span>Copy Prompt</span>
@@ -541,39 +551,47 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-semibold text-gray-700 mb-1 block">Aspect Ratio</label>
-                      <div className="bg-gray-50 p-3 rounded-xl border text-gray-800">
+                      <label className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-1 block`}>Aspect Ratio</label>
+                      <div className={`${isDark ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'} p-3 rounded-xl border`}>
                         {selectedImage.aspect_ratio}
                       </div>
                     </div>
                     <div>
-                      <label className="text-sm font-semibold text-gray-700 mb-1 block">Format</label>
-                      <div className="bg-gray-50 p-3 rounded-xl border text-gray-800 uppercase">
+                      <label className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-1 block`}>Format</label>
+                      <div className={`${isDark ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'} p-3 rounded-xl border uppercase`}>
                         {selectedImage.output_format}
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-sm font-semibold text-gray-700 mb-1 block">Safety Filter</label>
-                    <div className="bg-gray-50 p-3 rounded-xl border text-gray-800">
+                    <label className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-1 block`}>Safety Filter</label>
+                    <div className={`${isDark ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'} p-3 rounded-xl border`}>
                       {selectedImage.safety_filter_level?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                     </div>
                   </div>
 
                   {selectedImage.style && (
                     <div>
-                      <label className="text-sm font-semibold text-gray-700 mb-1 block">Style</label>
-                      <div className="bg-gray-50 p-3 rounded-xl border text-gray-800">
+                      <label className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-1 block`}>Style</label>
+                      <div className={`${isDark ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'} p-3 rounded-xl border`}>
                         {selectedImage.style}
                       </div>
                     </div>
                   )}
 
                   <div>
-                    <label className="text-sm font-semibold text-gray-700 mb-1 block">Created</label>
-                    <div className="bg-gray-50 p-3 rounded-xl border text-gray-800">
+                    <label className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-1 block`}>Created</label>
+                    <div className={`${isDark ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'} p-3 rounded-xl border`}>
                       {new Date(selectedImage.created_at).toLocaleString()}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-1 block`}>Generated By</label>
+                    <div className={`${isDark ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'} p-3 rounded-xl border flex items-center space-x-2`}>
+                      <User className={`h-4 w-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`} />
+                      <span className={isDark ? 'text-gray-200' : 'text-gray-800'}>You</span>
                     </div>
                   </div>
                 </div>

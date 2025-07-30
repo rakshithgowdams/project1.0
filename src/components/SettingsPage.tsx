@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { ArrowLeft, User, Bell, Shield, Palette, Download, Trash2, Save } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import Sidebar from './Sidebar';
 
 interface SettingsPageProps {
   onBack: () => void;
+  generatedCount: number;
+  maxGenerations: number;
 }
 
-export default function SettingsPage({ onBack }: SettingsPageProps) {
+export default function SettingsPage({ onBack, generatedCount, maxGenerations }: SettingsPageProps) {
   const { isDark, toggleTheme } = useTheme();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settings, setSettings] = useState({
     notifications: true,
     autoDownload: false,
@@ -39,6 +43,37 @@ export default function SettingsPage({ onBack }: SettingsPageProps) {
   };
 
   return (
+    <>
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentPage="settings"
+        onPageChange={(page) => {
+          if (page === 'generate') {
+            onBack();
+          }
+        }}
+        generatedCount={generatedCount}
+        maxGenerations={maxGenerations}
+      />
+      
+      {/* Desktop Sidebar - Always visible on large screens */}
+      <div className="hidden lg:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-80 z-40">
+        <Sidebar
+          isOpen={true}
+          onClose={() => {}}
+          currentPage="settings"
+          onPageChange={(page) => {
+            if (page === 'generate') {
+              onBack();
+            }
+          }}
+          generatedCount={generatedCount}
+          maxGenerations={maxGenerations}
+        />
+      </div>
+      
+      <div className={`transition-all duration-300 lg:ml-80`}>
     <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'} p-6`}>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
@@ -314,5 +349,7 @@ export default function SettingsPage({ onBack }: SettingsPageProps) {
         </div>
       </div>
     </div>
+    </div>
+    </>
   );
 }

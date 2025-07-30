@@ -3,12 +3,15 @@ import { ArrowLeft, Download, Copy, Eye, X, Heart, Share2 } from 'lucide-react';
 import { getExploreImages } from '../lib/supabase';
 import { GeneratedImage } from '../types';
 import { useTheme } from '../contexts/ThemeContext';
+import Sidebar from './Sidebar';
 
 interface ExplorePageProps {
   onBack: () => void;
+  generatedCount: number;
+  maxGenerations: number;
 }
 
-export default function ExplorePage({ onBack }: ExplorePageProps) {
+export default function ExplorePage({ onBack, generatedCount, maxGenerations }: ExplorePageProps) {
   const { isDark } = useTheme();
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,6 +19,7 @@ export default function ExplorePage({ onBack }: ExplorePageProps) {
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
   const [showCopySuccess, setShowCopySuccess] = useState(false);
   const [imageLoadingStates, setImageLoadingStates] = useState<{[key: string]: boolean}>({});
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     loadExploreImages();
@@ -141,6 +145,36 @@ export default function ExplorePage({ onBack }: ExplorePageProps) {
 
   return (
     <>
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentPage="explore"
+        onPageChange={(page) => {
+          if (page === 'generate') {
+            onBack();
+          }
+        }}
+        generatedCount={generatedCount}
+        maxGenerations={maxGenerations}
+      />
+      
+      {/* Desktop Sidebar - Always visible on large screens */}
+      <div className="hidden lg:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-80 z-40">
+        <Sidebar
+          isOpen={true}
+          onClose={() => {}}
+          currentPage="explore"
+          onPageChange={(page) => {
+            if (page === 'generate') {
+              onBack();
+            }
+          }}
+          generatedCount={generatedCount}
+          maxGenerations={maxGenerations}
+        />
+      </div>
+      
+      <div className={`transition-all duration-300 lg:ml-80`}>
       <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'} p-6`}>
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -253,6 +287,7 @@ export default function ExplorePage({ onBack }: ExplorePageProps) {
             </div>
           )}
         </div>
+      </div>
       </div>
 
       {/* Image Detail Modal */}

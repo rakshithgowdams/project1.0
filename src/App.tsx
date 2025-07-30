@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { isConfigured, upsertUser } from './lib/supabase';
-import { googleAuth, GoogleUserInfo } from './lib/googleAuth';
-import { userService } from './lib/userService';
-import { User } from './types';
+import { isConfigured } from './lib/supabase';
+import { googleAuth, GoogleUser } from './lib/googleAuth';
+import { userService, User } from './lib/userService';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import SupabaseSetup from './components/SupabaseSetup';
@@ -27,12 +26,12 @@ export default function App() {
     // Initialize user authentication
     const initializeUser = async () => {
       try {
-        // Check for Google OAuth callback
-        if (googleAuth.isCallback()) {
+        // Check for OAuth callback
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('code')) {
           // Handle Google OAuth callback
-          const googleUserInfo = await googleAuth.handleCallback();
-          const user = await upsertUser(googleUserInfo);
-          userService.setCurrentUser(user);
+          const googleUser = await googleAuth.handleCallback();
+          const user = await userService.upsertUser(googleUser);
           setUser(user);
         } else {
           // Check for existing user session

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { GeneratedImage, User } from '../types';
+import { GeneratedImage } from '../types';
+import { userService } from './userService';
 
 // Get environment variables
 const envSupabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -40,6 +41,7 @@ if (!isSupabaseConfigured) {
 
 // Create the Supabase client with validated values
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const auth = supabase.auth;
 
 // Export configuration status
 export const isConfigured = isSupabaseConfigured;
@@ -84,15 +86,15 @@ export const saveGeneratedImage = async (
   style: string,
   aspectRatio: string = '1:1',
   outputFormat: string = 'png',
-  safetyFilterLevel: string = 'block_medium_and_above',
-  userId: string
+  safetyFilterLevel: string = 'block_medium_and_above'
 ) => {
   // Check if Supabase is properly configured
   if (!isSupabaseConfigured) {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
-  if (!userId) throw new Error('User not authenticated');
+  const currentUser = userService.getCurrentUser();
+  if (!currentUser) throw new Error('User not authenticated');
 
   try {
     // Generate unique filename
@@ -108,7 +110,7 @@ export const saveGeneratedImage = async (
       .from('generated_images')
       .insert([
         {
-          user_id: userId,
+          user_id: currentUser.id,
           prompt,
           image_url: storageImageUrl, // Use storage URL instead of Replicate URL
           style,
@@ -129,7 +131,7 @@ export const saveGeneratedImage = async (
       .from('generated_images')
       .insert([
         {
-          user_id: userId,
+          user_id: currentUser.id,
           prompt,
           image_url: replicateImageUrl, // Fallback to original URL
           style,
@@ -145,86 +147,24 @@ export const saveGeneratedImage = async (
 };
 
 // ✅ Get user's image history
-export const getUserImages = async (userId: string) => {
+export const getUserImages = async () => {
   // Check if Supabase is properly configured
   if (!isSupabaseConfigured) {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
-  if (!userId) throw new Error('User not authenticated');
+  const currentUser = userService.getCurrentUser();
+  if (!currentUser) throw new Error('User not authenticated');
 
   const { data, error } = await supabase
     .from('generated_images')
     .select('*')
-    .eq('user_id', userId)
+    .eq('user_id', currentUser.id)
     .order('created_at', { ascending: false });
 
   return { data, error };
 };
 
-// ✅ Create or update user from Google OAuth data
-export const upsertUser = async (googleUser: any): Promise<User> => {
-  try {
-    // First, try to find existing user by Google ID
-    const { data: existingUser, error: findError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('google_id', googleUser.sub)
-      .single();
-
-    if (findError && findError.code !== 'PGRST116') { // PGRST116 = no rows returned
-      throw findError;
-    }
-
-    let user: User;
-
-    if (existingUser) {
-      // Update existing user
-      const { data, error } = await supabase
-        .from('users')
-        .update({
-          email: googleUser.email,
-          name: googleUser.name,
-          given_name: googleUser.given_name,
-          family_name: googleUser.family_name,
-          picture: googleUser.picture,
-          locale: googleUser.locale,
-          verified_email: googleUser.email_verified,
-          last_login: new Date().toISOString(),
-        })
-        .eq('google_id', googleUser.sub)
-        .select()
-        .single();
-
-      if (error) throw error;
-      user = data;
-    } else {
-      // Create new user
-      const { data, error } = await supabase
-        .from('users')
-        .insert({
-          google_id: googleUser.sub,
-          email: googleUser.email,
-          name: googleUser.name,
-          given_name: googleUser.given_name,
-          family_name: googleUser.family_name,
-          picture: googleUser.picture,
-          locale: googleUser.locale,
-          verified_email: googleUser.email_verified,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      user = data;
-    }
-
-    return user;
-  } catch (error: any) {
-    console.error('Error upserting user:', error);
-    throw new Error(`Failed to save user data: ${error.message}`);
-  }
-};
 // ✅ Get all public images for explore section
 export const getExploreImages = async () => {
   // Check if Supabase is properly configured

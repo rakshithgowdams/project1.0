@@ -4,7 +4,6 @@ import { stylePresets } from '../data/styles';
 import { enhancePrompt } from '../lib/gemini';
 import { generateImage } from '../lib/replicate';
 import { saveGeneratedImage } from '../lib/supabase';
-import { userService } from '../lib/userService';
 import ErrorModal from './ErrorModal';
 import ImageHistory from './ImageHistory';
 
@@ -55,11 +54,6 @@ export const ImageGenerator: React.FC = () => {
 
       // Save to database
       try {
-        const currentUser = userService.getCurrentUser();
-        if (!currentUser) {
-          throw new Error('User not authenticated');
-        }
-        
         const styleName = selectedStyle ? stylePresets.find(s => s.id === selectedStyle)?.name || '' : '';
         const saveResult = await saveGeneratedImage(
           prompt,
@@ -67,8 +61,7 @@ export const ImageGenerator: React.FC = () => {
           styleName,
           selectedAspectRatio,
           selectedOutputFormat,
-          selectedSafetyFilter,
-          currentUser.id
+          selectedSafetyFilter
         );
         
         if (saveResult.error) {

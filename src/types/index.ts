@@ -1,16 +1,8 @@
 export interface User {
   id: string;
-  google_id: string;
   email: string;
-  name: string;
-  given_name: string;
-  family_name: string;
-  picture: string;
-  locale: string;
-  verified_email: boolean;
+  username: string;
   created_at: string;
-  updated_at: string;
-  last_login: string;
 }
 
 export interface GeneratedImage {

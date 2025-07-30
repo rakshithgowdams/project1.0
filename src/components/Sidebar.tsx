@@ -77,6 +77,8 @@ export default function Sidebar({
       `}>
         {/* Header */}
         <div className={`p-4 lg:p-6 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
+          <div className="flex items-center justify-between mb-4">
+            
             <button
               onClick={onClose}
               className={`lg:hidden p-2 rounded-lg transition-colors ${
@@ -88,7 +90,6 @@ export default function Sidebar({
               <X className="h-5 w-5" />
             </button>
           </div>
-        </div>
         </div>
 
         {/* Navigation Menu */}

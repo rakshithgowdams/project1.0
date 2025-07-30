@@ -79,11 +79,8 @@ export default function Sidebar({
         <div className={`p-4 lg:p-6 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
-                <Zap className="h-6 w-6 text-white" />
-              </div>
               <h3 className={`font-bold text-lg ${isDark ? 'text-white' : 'text-gray-900'} hidden sm:block`}>
-                Menu
+                Side Bar
               </h3>
             </div>
             <button

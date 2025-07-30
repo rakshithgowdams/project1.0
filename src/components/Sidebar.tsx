@@ -75,22 +75,6 @@ export default function Sidebar({
         ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}
         border-r shadow-2xl flex flex-col overflow-hidden
       `}>
-        {/* Header */}
-        <div className={`p-4 lg:p-6 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
-          <div className="flex items-center justify-between mb-4">
-            
-            <button
-              onClick={onClose}
-              className={`lg:hidden p-2 rounded-lg transition-colors ${
-                isDark 
-                  ? 'text-gray-400 hover:text-white hover:bg-gray-800' 
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
 
         {/* Navigation Menu */}
         <div className="flex-1 p-4 lg:p-6 overflow-y-auto">

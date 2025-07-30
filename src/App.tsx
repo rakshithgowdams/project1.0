@@ -21,6 +21,35 @@ function AppContent() {
   const [showSupabaseSetup, setShowSupabaseSetup] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [supabaseConfigured, setSupabaseConfigured] = useState(false);
+  const [generatedCount, setGeneratedCount] = useState(0);
+
+  // Load generation count from localStorage
+  useEffect(() => {
+    const today = new Date().toDateString();
+    const savedData = localStorage.getItem('dailyGenerations');
+    
+    if (savedData) {
+      const { date, count } = JSON.parse(savedData);
+      if (date === today) {
+        setGeneratedCount(count);
+      } else {
+        // Reset count for new day
+        localStorage.setItem('dailyGenerations', JSON.stringify({ date: today, count: 0 }));
+        setGeneratedCount(0);
+      }
+    } else {
+      localStorage.setItem('dailyGenerations', JSON.stringify({ date: today, count: 0 }));
+    }
+  }, []);
+
+  const handleImageGenerated = () => {
+    const newCount = generatedCount + 1;
+    setGeneratedCount(newCount);
+    
+    // Save to localStorage
+    const today = new Date().toDateString();
+    localStorage.setItem('dailyGenerations', JSON.stringify({ date: today, count: newCount }));
+  };
 
   useEffect(() => {
     // Check if Supabase is configured
@@ -119,7 +148,10 @@ function AppContent() {
       
       <main className="flex-1">
         {supabaseConfigured && user ? (
-          <ImageGenerator />
+          <ImageGenerator 
+            generatedCount={generatedCount}
+            onImageGenerated={handleImageGenerated}
+          />
         ) : supabaseConfigured ? (
           <>
             <HeroSection onGetStarted={handleGetStarted} />

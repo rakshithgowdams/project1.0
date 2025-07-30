@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
-import { Wand2, Download, Copy, Sparkles, Image as ImageIcon, Palette, Zap, Shield, FileImage } from 'lucide-react';
+import { Wand2, Download, Copy, Sparkles, Image as ImageIcon, Palette, Zap, Shield, FileImage, Menu } from 'lucide-react';
 import { stylePresets } from '../data/styles';
 import { enhancePrompt } from '../lib/gemini';
 import { generateImage } from '../lib/replicate';
 import { saveGeneratedImage } from '../lib/supabase';
 import ErrorModal from './ErrorModal';
-import ImageHistory from './ImageHistory';
+import Sidebar from './Sidebar';
+import ExplorePage from './ExplorePage';
+import SettingsPage from './SettingsPage';
+import { useTheme } from '../contexts/ThemeContext';
 
-export const ImageGenerator: React.FC = () => {
+interface ImageGeneratorProps {
+  generatedCount: number;
+  onImageGenerated: () => void;
+}
+
+export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, onImageGenerated }) => {
+  const { isDark } = useTheme();
   const [prompt, setPrompt] = useState('');
   const [selectedStyle, setSelectedStyle] = useState('');
   const [selectedAspectRatio, setSelectedAspectRatio] = useState('1:1');
@@ -19,8 +28,10 @@ export const ImageGenerator: React.FC = () => {
   const [error, setError] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showCopySuccess, setShowCopySuccess] = useState(false);
-  const [refreshHistory, setRefreshHistory] = useState(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState('generate');
 
+  const MAX_GENERATIONS = 5;
   const MAX_CHARACTERS = 5000; // Increased limit for longer prompts
 
   const handleGenerate = async () => {
@@ -32,6 +43,12 @@ export const ImageGenerator: React.FC = () => {
 
     if (prompt.length > MAX_CHARACTERS) {
       setError(`Prompt is too long. Please keep it under ${MAX_CHARACTERS} characters.`);
+      setShowErrorModal(true);
+      return;
+    }
+
+    if (generatedCount >= MAX_GENERATIONS) {
+      setError(`You've reached your daily limit of ${MAX_GENERATIONS} images. Upgrade to Pro for unlimited generations!`);
       setShowErrorModal(true);
       return;
     }
@@ -67,8 +84,7 @@ export const ImageGenerator: React.FC = () => {
         if (saveResult.error) {
           console.error('Failed to save image:', saveResult.error);
         }
-        // Trigger history refresh
-        setRefreshHistory(prev => prev + 1);
+        onImageGenerated(); // Increment the counter
       } catch (saveError) {
         console.error('Failed to save image to history:', saveError);
         // Don't show error to user as image generation was successful
@@ -186,8 +202,38 @@ export const ImageGenerator: React.FC = () => {
     return `${length}/${MAX_CHARACTERS} characters`;
   };
 
+  // Handle page changes
+  if (currentPage === 'explore') {
+    return <ExplorePage onBack={() => setCurrentPage('generate')} />;
+  }
+
+  if (currentPage === 'settings') {
+    return <SettingsPage onBack={() => setCurrentPage('generate')} />;
+  }
+
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <>
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        generatedCount={generatedCount}
+        maxGenerations={MAX_GENERATIONS}
+      />
+      <div className={`transition-all duration-300 ${sidebarOpen ? 'lg:ml-80' : ''}`}>
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden mb-6">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className={`flex items-center space-x-2 ${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors`}
+            >
+              <Menu className="h-6 w-6" />
+              <span>Menu</span>
+            </button>
+          </div>
+
       {/* Hero Section */}
       <div className="text-center mb-12">
         <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
@@ -201,6 +247,16 @@ export const ImageGenerator: React.FC = () => {
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
           Transform your imagination into reality. Describe what you want to see, and our AI will create it for you in seconds.
         </p>
+        
+        {/* Generation Counter */}
+        <div className={`mt-6 inline-flex items-center space-x-2 ${isDark ? 'bg-gray-800' : 'bg-white'} px-4 py-2 rounded-full shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+          <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            Daily generations: 
+          </span>
+          <span className={`font-bold ${generatedCount >= MAX_GENERATIONS ? 'text-red-600' : 'text-blue-600'}`}>
+            {generatedCount}/{MAX_GENERATIONS}
+          </span>
+        </div>
       </div>
 
       {/* Main Generator Card */}
@@ -381,18 +437,32 @@ export const ImageGenerator: React.FC = () => {
           {/* Generate Button */}
           <button
             onClick={handleGenerate}
-            disabled={loading || enhancing || !prompt.trim()}
+            disabled={loading || enhancing || !prompt.trim() || generatedCount >= MAX_GENERATIONS}
             className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-6 rounded-2xl font-bold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 group"
           >
             <Wand2 className={`h-6 w-6 ${loading ? 'animate-spin' : 'group-hover:scale-110 transition-transform'}`} />
             <span>
-              {loading ? 'Creating your masterpiece...' : 
+              {generatedCount >= MAX_GENERATIONS ? 'Daily limit reached - Upgrade to continue' :
+                loading ? 'Creating your masterpiece...' : 
                 enhancing ? 'Magic Prompt enhancing...' : 
                 'Generate Image'}
             </span>
           </button>
         </div>
       </div>
+
+      {/* Limit Warning */}
+      {generatedCount >= MAX_GENERATIONS && (
+        <div className={`${isDark ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'} border rounded-2xl p-6 mb-8`}>
+          <h3 className={`font-bold ${isDark ? 'text-red-400' : 'text-red-700'} mb-2`}>Daily Limit Reached</h3>
+          <p className={`${isDark ? 'text-red-300' : 'text-red-600'} mb-4`}>
+            You've used all {MAX_GENERATIONS} of your daily free generations. Upgrade to Pro for unlimited image generation!
+          </p>
+          <button className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl">
+            Upgrade to Pro
+          </button>
+        </div>
+      )}
 
       {/* Generated Image Display */}
       {generatedImage && (
@@ -469,9 +539,6 @@ export const ImageGenerator: React.FC = () => {
         </div>
       </div>
 
-      {/* Image History */}
-      <ImageHistory key={refreshHistory} />
-
       {/* Copy Success Notification */}
       {showCopySuccess && (
         <div className="fixed bottom-4 left-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in fade-in-0 slide-in-from-left-2 duration-300">
@@ -490,6 +557,9 @@ export const ImageGenerator: React.FC = () => {
         error={error}
         onRetry={handleRetry}
       />
+        </div>
+      </div>
+    </>
     </div>
   );
 };

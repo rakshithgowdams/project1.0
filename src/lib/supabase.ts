@@ -165,10 +165,6 @@ export const signInWithGoogle = async () => {
   }
 };
 
-  if (error) throw error;
-  return { data, error };
-};
-
 // ✅ Save generated image to Supabase table
 export const saveGeneratedImage = async (
   prompt: string, 

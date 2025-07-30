@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, X, Zap, Clock, Star, Shield } from 'lucide-react';
+import { Check, X, Zap, Clock, Star, Shield, Sparkles } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 export default function ComparisonSection() {

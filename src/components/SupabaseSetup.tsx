@@ -158,5 +158,6 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
         </div>
       </div>
     </div>
+  )
   );
 }

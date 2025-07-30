@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Download, Copy, Eye, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getUserImages, getExploreImages } from '../lib/supabase';
+import { userService } from '../lib/userService';
 import { GeneratedImage } from '../types';
 
 interface ImageHistoryProps {
@@ -33,7 +34,11 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
       let data, error;
       
       if (activeTab === 'library') {
-        ({ data, error } = await getUserImages());
+        const currentUser = userService.getCurrentUser();
+        if (!currentUser) {
+          throw new Error('User not authenticated');
+        }
+        ({ data, error } = await getUserImages(currentUser.id));
       } else {
         ({ data, error } = await getExploreImages());
       }

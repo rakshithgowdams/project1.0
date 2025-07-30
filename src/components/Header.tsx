@@ -1,6 +1,6 @@
 import React from 'react';
 import { Zap, User, LogOut } from 'lucide-react';
-import { User as UserType } from '../lib/userService';
+import { User as UserType } from '../types';
 
 interface HeaderProps {
   user: UserType | null;

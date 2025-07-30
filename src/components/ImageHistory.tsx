@@ -286,8 +286,8 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
               }`}
             >
             Explore
-            </button>*/}
-          </div>
+            </button>
+          </div>*/}
         </div>
 
         <div className="flex items-center justify-between mb-6">

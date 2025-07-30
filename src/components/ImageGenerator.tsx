@@ -264,7 +264,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
         {/* Generation Counter */}
         <div className={`mt-6 inline-flex items-center space-x-2 ${isDark ? 'bg-gray-800' : 'bg-white'} px-4 py-2 rounded-full shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
           <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-            Daily generations: 
+            Total generations: 
           </span>
           <span className={`font-bold ${generatedCount >= MAX_GENERATIONS ? 'text-red-600' : 'text-blue-600'}`}>
             {generatedCount}/{MAX_GENERATIONS}
@@ -455,7 +455,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
           >
             <Wand2 className={`h-6 w-6 ${loading ? 'animate-spin' : 'group-hover:scale-110 transition-transform'}`} />
             <span>
-              {generatedCount >= MAX_GENERATIONS ? 'Daily limit reached - Upgrade to continue' :
+              {generatedCount >= MAX_GENERATIONS ? 'Generation limit reached - Upgrade to continue' :
                 prompt.length > MAX_CHARACTERS ? 'Prompt too long - Please shorten' :
                 loading ? 'Creating your masterpiece...' : 
                 enhancing ? 'Magic Prompt enhancing...' : 
@@ -470,7 +470,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
         <div className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-8">
           <h3 className={`font-bold ${isDark ? 'text-red-400' : 'text-red-700'} mb-2`}>Daily Limit Reached</h3>
           <p className={`${isDark ? 'text-red-300' : 'text-red-600'} mb-4`}>
-            You've used all {MAX_GENERATIONS} of your daily free generations. Upgrade to Pro for unlimited image generation!
+            You've used all {MAX_GENERATIONS} of your free generations. Upgrade to Pro for unlimited image generation!
           </p>
           <button className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl">
             Upgrade to Pro
@@ -481,9 +481,9 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
       {/* Warning when approaching limit */}
       {generatedCount >= MAX_GENERATIONS * 0.8 && generatedCount < MAX_GENERATIONS && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 mb-8">
-          <h3 className="font-bold text-yellow-700 mb-2">Almost at your daily limit!</h3>
+          <h3 className="font-bold text-yellow-700 mb-2">Almost at your generation limit!</h3>
           <p className="text-yellow-600 mb-4">
-            You have {MAX_GENERATIONS - generatedCount} generations remaining today. Consider upgrading for unlimited access!
+            You have {MAX_GENERATIONS - generatedCount} generations remaining. Consider upgrading for unlimited access!
           </p>
           <button className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl">
             Upgrade to Pro

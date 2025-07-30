@@ -25,27 +25,20 @@ function AppContent() {
 
   // Load generation count from localStorage
   useEffect(() => {
-    const today = new Date().toDateString();
     const savedData = localStorage.getItem('dailyGenerations');
     
     if (savedData) {
-      const { date, count } = JSON.parse(savedData);
-      if (date === today) {
-        setGeneratedCount(count);
-      } else {
-        // Reset count for new day
-        localStorage.setItem('dailyGenerations', JSON.stringify({ date: today, count: 0 }));
-        setGeneratedCount(0);
-      }
+      const { count } = JSON.parse(savedData);
+      setGeneratedCount(count);
     } else {
-      localStorage.setItem('dailyGenerations', JSON.stringify({ date: today, count: 0 }));
+      localStorage.setItem('dailyGenerations', JSON.stringify({ count: 0 }));
     }
   }, []);
 
   const handleImageGenerated = () => {
     // Check if user has reached the limit
     if (generatedCount >= 5) {
-      console.warn('User has reached daily generation limit');
+      console.warn('User has reached generation limit');
       return;
     }
     
@@ -53,8 +46,7 @@ function AppContent() {
     setGeneratedCount(newCount);
     
     // Save to localStorage
-    const today = new Date().toDateString();
-    localStorage.setItem('dailyGenerations', JSON.stringify({ date: today, count: newCount }));
+    localStorage.setItem('dailyGenerations', JSON.stringify({ count: newCount }));
   };
 
   useEffect(() => {

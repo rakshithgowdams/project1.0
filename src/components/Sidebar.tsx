@@ -70,7 +70,7 @@ export default function Sidebar({
 
       {/* Sidebar */}
       <div className={`
-        fixed top-16 left-0 h-full w-80 z-50 transform transition-transform duration-300 ease-in-out
+        fixed top-16 left-0 h-full w-80 z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto
         ${isOpen ? 'translate-x-0' : 'lg:translate-x-0 -translate-x-full'}
         ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}
         border-r shadow-2xl flex flex-col
@@ -81,14 +81,6 @@ export default function Sidebar({
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
                 <Zap className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h2 className={`font-bold text-lg ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  AI Generator
-                </h2>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                  Create amazing images
-                </p>
               </div>
             </div>
             <button
@@ -102,16 +94,10 @@ export default function Sidebar({
               <X className="h-5 w-5" />
             </button>
           </div>
-
-          {/* Upgrade Button */}
-          <button className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-3 px-4 rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group">
-            <Crown className="h-5 w-5 group-hover:scale-110 transition-transform" />
-            <span>Upgrade to Pro</span>
-          </button>
         </div>
 
         {/* Navigation Menu */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-6 overflow-y-auto">
           <nav className="space-y-2">
             {menuItems.map((item) => (
               <button
@@ -158,11 +144,11 @@ export default function Sidebar({
         </div>
 
         {/* Generation Tracking */}
-        <div className={`p-6 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+        <div className={`p-6 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'} flex-shrink-0`}>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                Daily Generations
+                Total Generations
               </h3>
               <div className="flex items-center space-x-1">
                 <TrendingUp className={`h-4 w-4 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
@@ -199,17 +185,23 @@ export default function Sidebar({
               </div>
             </div>
 
+            {/* Upgrade Button */}
+            <button className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-3 px-4 rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group">
+              <Crown className="h-5 w-5 group-hover:scale-110 transition-transform" />
+              <span>Upgrade to Pro</span>
+            </button>
+
             {/* Status Message */}
             {generatedCount >= maxGenerations ? (
               <div className={`p-3 rounded-lg ${isDark ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
                 <p className={`text-sm font-medium ${isDark ? 'text-red-400' : 'text-red-700'}`}>
-                  Daily limit reached! Upgrade for unlimited generations.
+                  Generation limit reached! Upgrade for unlimited generations.
                 </p>
               </div>
             ) : generatedCount >= maxGenerations * 0.8 ? (
               <div className={`p-3 rounded-lg ${isDark ? 'bg-yellow-900/20 border border-yellow-800' : 'bg-yellow-50 border border-yellow-200'}`}>
                 <p className={`text-sm font-medium ${isDark ? 'text-yellow-400' : 'text-yellow-700'}`}>
-                  {maxGenerations - generatedCount} generations left today.
+                  {maxGenerations - generatedCount} generations remaining.
                 </p>
               </div>
             ) : (

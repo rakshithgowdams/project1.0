@@ -563,6 +563,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
           </div>
         </div>
       </div>
+          <Br />
 
       {/* Image Library */}
       <ImageHistory />

@@ -259,6 +259,8 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
     <>
       <div className={`${isDark ? 'bg-gray-800/80 border-gray-700' : 'bg-white/80 border-white/20'} backdrop-blur-sm rounded-3xl p-8 shadow-2xl border`}>
         {/* Tab Navigation - Always visible */}
+        <div className="flex items-center justify-center mb-8">
+          <div className={`${isDark ? 'bg-gray-700' : 'bg-gray-100'} p-1 rounded-2xl flex`}>
             <button
               onClick={() => {
                 setActiveTab('library');
@@ -271,6 +273,21 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
               }`}
             >
               Your Library
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('explore');
+                setCurrentPage(1); // Reset to first page
+              }}
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+                activeTab === 'explore'
+                  ? `${isDark ? 'bg-gray-800 text-blue-400' : 'bg-white text-blue-600'} shadow-lg`
+                  : `${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'}`
+              }`}
+            >
+            </button>
+          </div>
+        </div>
 
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2">

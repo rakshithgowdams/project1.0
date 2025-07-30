@@ -259,8 +259,7 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
     <>
       <div className={`${isDark ? 'bg-gray-800/80 border-gray-700' : 'bg-white/80 border-white/20'} backdrop-blur-sm rounded-3xl p-8 shadow-2xl border`}>
         {/* Tab Navigation - Always visible */}
-        <div className="flex items-center justify-center mb-8">
-          <div className={`${isDark ? 'bg-gray-700' : 'bg-gray-100'} p-1 rounded-2xl flex`}>
+          <div className={`${isDark ? 'bg-gray-700' : 'bg-gray-100'} p-1 rounded-2xl flex items-center`}>
             <button
               onClick={() => {
                 setActiveTab('library');
@@ -274,7 +273,6 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
             >
               Your Library
           </div>
-        </div>
 
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2">

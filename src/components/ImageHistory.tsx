@@ -30,6 +30,8 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
   const loadImages = async () => {
     try {
       setLoading(true);
+      setImages([]); // Clear existing images
+      setImageLoadingStates({}); // Reset loading states
       let data, error;
       
       if (activeTab === 'library') {
@@ -57,6 +59,8 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
   const loadExploreImages = async () => {
     try {
       setLoading(true);
+      setImages([]); // Clear existing images
+      setImageLoadingStates({}); // Reset loading states
       const { data, error } = await getExploreImages();
       if (error) throw error;
       setImages(data || []);
@@ -81,6 +85,12 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
     }));
   };
 
+  const handleImageError = (imageId: string) => {
+    setImageLoadingStates(prev => ({
+      ...prev,
+      [imageId]: false
+    }));
+  };
   const handleDownload = async (image: GeneratedImage) => {
     try {
       const response = await fetch(image.image_url);
@@ -252,7 +262,7 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
             <button
               onClick={() => {
                 setActiveTab('library');
-                loadImages();
+                setCurrentPage(1); // Reset to first page
               }}
               className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
                 activeTab === 'library'
@@ -265,7 +275,7 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
             <button
               onClick={() => {
                 setActiveTab('explore');
-                loadExploreImages();
+                setCurrentPage(1); // Reset to first page
               }}
               className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
                 activeTab === 'explore'
@@ -321,7 +331,7 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
                   }`}
                   loading="lazy"
                   onLoad={() => handleImageLoad(image.id)}
-                  onError={() => handleImageLoad(image.id)}
+                  onError={() => handleImageError(image.id)}
                 />
                 
                 {/* Overlay with actions */}

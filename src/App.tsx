@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { isConfigured } from './lib/supabase';
-import { googleAuth, GoogleUser } from './lib/googleAuth';
-import { userService, User } from './lib/userService';
+import { isConfigured, supabase } from './lib/supabase';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import SupabaseSetup from './components/SupabaseSetup';
+import AuthModal from './components/AuthModal';
 import { ImageGenerator } from './components/ImageGenerator';
+import type { User } from '@supabase/supabase-js';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showSupabaseSetup, setShowSupabaseSetup] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [supabaseConfigured, setSupabaseConfigured] = useState(false);
 
   useEffect(() => {
@@ -24,45 +25,53 @@ export default function App() {
     }
 
     // Initialize user authentication
-    const initializeUser = async () => {
+    const initializeAuth = async () => {
       try {
-        // Check for OAuth callback
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('code')) {
-          // Handle Google OAuth callback
-          const googleUser = await googleAuth.handleCallback();
-          const user = await userService.upsertUser(googleUser);
-          setUser(user);
-        } else {
-          // Check for existing user session
-          const currentUser = userService.getCurrentUser();
-          setUser(currentUser);
+        // Get current user session
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error) {
+          console.error('Auth initialization error:', error);
         }
+        
+        setUser(user);
       } catch (error) {
         console.error('User initialization error:', error);
-        // Clear any corrupted session data
-        userService.signOut();
         setUser(null);
       } finally {
         setLoading(false);
       }
     };
 
-    initializeUser();
+    initializeAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
+        setUser(session?.user ?? null);
+        
+        if (event === 'SIGNED_IN') {
+          setShowAuthModal(false);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const handleGoogleSignIn = async () => {
-    try {
-      googleAuth.signIn();
-    } catch (error: any) {
-      console.error('Google sign-in error:', error);
-      alert(`Sign-in failed: ${error.message}`);
-    }
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+    // User state will be updated by the auth state change listener
   };
 
-  const handleSignOut = () => {
-    userService.signOut();
-    setUser(null);
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
   // Show Supabase setup modal if not configured
@@ -84,7 +93,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex flex-col">
-      <Header user={user} onAuthClick={handleGoogleSignIn} onSignOut={handleSignOut} />
+      <Header 
+        user={user} 
+        onAuthClick={() => setShowAuthModal(true)} 
+        onSignOut={handleSignOut} 
+      />
       
       <main className="flex-1">
         {supabaseConfigured && user ? (
@@ -105,10 +118,10 @@ export default function App() {
                 Sign up to start generating professional-quality images in seconds.
               </p>
               <button
-                onClick={handleGoogleSignIn}
+                onClick={() => setShowAuthModal(true)}
                 className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
-                Sign in with Google
+                Get Started
               </button>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
@@ -170,6 +183,13 @@ export default function App() {
       </main>
 
       <Footer />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 }

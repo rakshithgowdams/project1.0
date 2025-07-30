@@ -49,12 +49,6 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
                   Go to Supabase and create a new project if you haven't already.
                 </p>
                 <a
-                  href="https://supabase.com/dashboard"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
-                >
-                  <ExternalLink className="h-4 w-4" />
                   <span>Open Supabase Dashboard</span>
                 </a>
               </div>
@@ -63,14 +57,14 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                 2
-              </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Configure Authentication</h3>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Get Project Credentials</h3>
-                <p className="text-gray-600 mb-3">
+                    In your Supabase dashboard, go to Authentication → Settings and:
                   From your Supabase project dashboard, go to Settings → API to find:
                 </p>
-                <ul className="list-disc list-inside text-gray-600 space-y-1 mb-3">
-                  <li><strong>Project URL:</strong> Found in "Project URL" section</li>
+                    <li><strong>Enable Email authentication</strong></li>
+                    <li><strong>Disable email confirmation</strong> for faster testing (optional)</li>
+                    <li><strong>Set up email templates</strong> if you want custom emails</li>
                   <li><strong>Anon Key:</strong> Found in "Project API keys" section</li>
                 </ul>
               </div>
@@ -80,25 +74,15 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
               <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                 3
               </div>
-              <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Set Up Database Tables</h3>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Update Environment Variables</h3>
-                <p className="text-gray-600 mb-3">
+                    The application will automatically create the required database tables:
                   Update your <code className="bg-gray-100 px-2 py-1 rounded">.env</code> file with your Supabase credentials:
                 </p>
-                <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                  <div className="space-y-1">
-                    <div><span className="text-gray-500"># Replace with your actual Supabase URL</span></div>
+                    <li><strong>generated_images:</strong> Stores AI-generated images</li>
+                    <li><strong>auth.users:</strong> Managed by Supabase Auth (automatic)</li>
+                    <li><strong>Storage bucket:</strong> For storing generated images</li>
                     <div>VITE_SUPABASE_URL=https://your-project-id.supabase.co</div>
-                    <div className="mt-2"><span className="text-gray-500"># Replace with your actual Supabase anon key</span></div>
-                    <div>VITE_SUPABASE_ANON_KEY=your-supabase-anon-key</div>
-                    <div className="mt-2"><span className="text-red-400"># ⚠️ Make sure there are no typos or extra spaces!</span></div>
-                  </div>
-                </div>
-                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-700 text-sm font-medium">
-                    <strong>Current Issue:</strong> The API key in your .env file is invalid. 
-                    Double-check that you copied the exact "anon/public\" key from your Supabase dashboard.
-                  </p>
                 </div>
               </div>
             </div>
@@ -135,8 +119,8 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
                   <li>Configure redirect URLs for your domain</li>
                 </ul>
                 <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-amber-700 text-sm font-medium">
-                    <strong>Google OAuth Setup:</strong> To enable Google sign-in, you must:
+                    will automatically connect to your Supabase project. Users will be able to create accounts
+                    with email/password authentication and their generated images will be stored securely.
                   </p>
                   <ol className="text-amber-700 text-sm mt-2 space-y-1 list-decimal list-inside">
                     <li>Go to Authentication → Providers in your Supabase dashboard</li>

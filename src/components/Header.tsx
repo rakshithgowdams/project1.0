@@ -1,15 +1,14 @@
 import React from 'react';
 import { Zap, User, LogOut } from 'lucide-react';
-import { User as UserType } from '../lib/userService';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface HeaderProps {
-  user: UserType | null;
+  user: SupabaseUser | null;
   onAuthClick: () => void;
   onSignOut: () => void;
 }
 
 export default function Header({ user, onAuthClick, onSignOut }: HeaderProps) {
-
   return (
     <header className="bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,17 +26,9 @@ export default function Header({ user, onAuthClick, onSignOut }: HeaderProps) {
             {user ? (
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2 bg-white/10 rounded-full px-3 py-1">
-                  {user.picture ? (
-                    <img 
-                      src={user.picture} 
-                      alt={user.name} 
-                      className="h-6 w-6 rounded-full"
-                    />
-                  ) : (
-                    <User className="h-4 w-4 text-gray-700" />
-                  )}
+                  <User className="h-4 w-4 text-gray-700" />
                   <span className="text-sm font-medium text-gray-700">
-                    {user.given_name || user.name || user.email}
+                    {user.user_metadata?.username || user.email?.split('@')[0] || 'User'}
                   </span>
                 </div>
                 <button
@@ -53,7 +44,7 @@ export default function Header({ user, onAuthClick, onSignOut }: HeaderProps) {
                 onClick={onAuthClick}
                 className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                Sign in with Google
+                Sign In
               </button>
             )}
           </div>

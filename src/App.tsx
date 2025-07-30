@@ -43,6 +43,12 @@ function AppContent() {
   }, []);
 
   const handleImageGenerated = () => {
+    // Check if user has reached the limit
+    if (generatedCount >= 5) {
+      console.warn('User has reached daily generation limit');
+      return;
+    }
+    
     const newCount = generatedCount + 1;
     setGeneratedCount(newCount);
     

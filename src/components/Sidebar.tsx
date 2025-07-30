@@ -70,8 +70,8 @@ export default function Sidebar({
 
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full w-80 z-50 transform transition-transform duration-300 ease-in-out
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        fixed top-16 left-0 h-full w-80 z-50 transform transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : 'lg:translate-x-0 -translate-x-full'}
         ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}
         border-r shadow-2xl flex flex-col
       `}>

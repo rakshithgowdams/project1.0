@@ -221,7 +221,20 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
         generatedCount={generatedCount}
         maxGenerations={MAX_GENERATIONS}
       />
-      <div className={`transition-all duration-300 ${sidebarOpen ? 'lg:ml-80' : ''}`}>
+      
+      {/* Desktop Sidebar - Always visible on large screens */}
+      <div className="hidden lg:block fixed left-0 top-16 h-full w-80 z-40">
+        <Sidebar
+          isOpen={true}
+          onClose={() => {}}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          generatedCount={generatedCount}
+          maxGenerations={MAX_GENERATIONS}
+        />
+      </div>
+      
+      <div className={`transition-all duration-300 lg:ml-80`}>
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Mobile Menu Button */}
           <div className="lg:hidden mb-6">
@@ -437,12 +450,13 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
           {/* Generate Button */}
           <button
             onClick={handleGenerate}
-            disabled={loading || enhancing || !prompt.trim() || generatedCount >= MAX_GENERATIONS}
+            disabled={loading || enhancing || !prompt.trim() || generatedCount >= MAX_GENERATIONS || prompt.length > MAX_CHARACTERS}
             className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-6 rounded-2xl font-bold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 group"
           >
             <Wand2 className={`h-6 w-6 ${loading ? 'animate-spin' : 'group-hover:scale-110 transition-transform'}`} />
             <span>
               {generatedCount >= MAX_GENERATIONS ? 'Daily limit reached - Upgrade to continue' :
+                prompt.length > MAX_CHARACTERS ? 'Prompt too long - Please shorten' :
                 loading ? 'Creating your masterpiece...' : 
                 enhancing ? 'Magic Prompt enhancing...' : 
                 'Generate Image'}
@@ -453,10 +467,23 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
 
       {/* Limit Warning */}
       {generatedCount >= MAX_GENERATIONS && (
-        <div className={`${isDark ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'} border rounded-2xl p-6 mb-8`}>
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-8">
           <h3 className={`font-bold ${isDark ? 'text-red-400' : 'text-red-700'} mb-2`}>Daily Limit Reached</h3>
           <p className={`${isDark ? 'text-red-300' : 'text-red-600'} mb-4`}>
             You've used all {MAX_GENERATIONS} of your daily free generations. Upgrade to Pro for unlimited image generation!
+          </p>
+          <button className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl">
+            Upgrade to Pro
+          </button>
+        </div>
+      )}
+      
+      {/* Warning when approaching limit */}
+      {generatedCount >= MAX_GENERATIONS * 0.8 && generatedCount < MAX_GENERATIONS && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 mb-8">
+          <h3 className="font-bold text-yellow-700 mb-2">Almost at your daily limit!</h3>
+          <p className="text-yellow-600 mb-4">
+            You have {MAX_GENERATIONS - generatedCount} generations remaining today. Consider upgrading for unlimited access!
           </p>
           <button className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl">
             Upgrade to Pro

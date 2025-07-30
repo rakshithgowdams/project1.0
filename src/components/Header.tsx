@@ -1,25 +1,14 @@
 import React from 'react';
 import { Zap, User, LogOut } from 'lucide-react';
-import { signOut } from '../lib/supabase';
+import { User as UserType } from '../lib/userService';
 
 interface HeaderProps {
-  user: any;
+  user: UserType | null;
   onAuthClick: () => void;
+  onSignOut: () => void;
 }
 
-export default function Header({ user, onAuthClick }: HeaderProps) {
-  const handleSignOut = async () => {
-    try {
-      const { error } = await signOut();
-      if (error) {
-        console.error('Error signing out:', error);
-      }
-      // The auth state change will be handled by the listener in App.tsx
-      // No need to manually reload the page
-    } catch (err) {
-      console.error('Logout failed:', err);
-    }
-  };
+export default function Header({ user, onAuthClick, onSignOut }: HeaderProps) {
 
   return (
     <header className="bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
@@ -38,13 +27,21 @@ export default function Header({ user, onAuthClick }: HeaderProps) {
             {user ? (
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2 bg-white/10 rounded-full px-3 py-1">
-                  <User className="h-4 w-4 text-gray-700" />
+                  {user.picture ? (
+                    <img 
+                      src={user.picture} 
+                      alt={user.name} 
+                      className="h-6 w-6 rounded-full"
+                    />
+                  ) : (
+                    <User className="h-4 w-4 text-gray-700" />
+                  )}
                   <span className="text-sm font-medium text-gray-700">
-                    {user.user_metadata?.username || user.email}
+                    {user.given_name || user.name || user.email}
                   </span>
                 </div>
                 <button
-                  onClick={handleSignOut}
+                  onClick={onSignOut}
                   className="p-2 text-gray-600 hover:text-gray-800 hover:bg-white/10 rounded-lg transition-all duration-200"
                   title="Sign Out"
                 >
@@ -56,7 +53,7 @@ export default function Header({ user, onAuthClick }: HeaderProps) {
                 onClick={onAuthClick}
                 className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                Get Started
+                Sign in with Google
               </button>
             )}
           </div>

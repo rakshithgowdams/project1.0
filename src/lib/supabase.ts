@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { GeneratedImage } from '../types';
+import { userService } from './userService';
 
 // Get environment variables
 const envSupabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -78,93 +79,6 @@ export const uploadImageToStorage = async (imageUrl: string, fileName: string) =
   }
 };
 
-// ✅ Sign up function
-export const signUp = async (email: string, password: string, username: string) => {
-  // Check if Supabase is properly configured
-  if (!isSupabaseConfigured) {
-    throw new Error('Supabase is not configured. Please set up your Supabase project first.');
-  }
-
-  if (!email || !password || !username) {
-    throw new Error('Email, password, and username are required');
-  }
-
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        username: username,
-        display_name: username,
-      }
-    }
-  });
-
-  if (error) throw error;
-  return { data, error };
-};
-
-// ✅ Sign in function
-export const signIn = async (email: string, password: string) => {
-  // Check if Supabase is properly configured
-  if (!isSupabaseConfigured) {
-    throw new Error('Supabase is not configured. Please set up your Supabase project first.');
-  }
-
-  if (!email || !password) {
-    throw new Error('Email and password are required');
-  }
-
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) throw error;
-  return { data, error };
-};
-
-// ✅ Sign out function
-export const signOut = async () => {
-  const { error } = await supabase.auth.signOut();
-  return { error };
-};
-
-// ✅ Google Sign In function
-export const signInWithGoogle = async () => {
-  // Check if Supabase is properly configured
-  if (!isSupabaseConfigured) {
-    throw new Error('Supabase is not configured. Please set up your Supabase project first.');
-  }
-
-  try {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}`,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
-        scopes: 'openid email profile',
-      }
-    });
-
-    if (error) throw error;
-    return { data, error };
-  } catch (error: any) {
-    // Handle specific Google OAuth provider errors
-    if (error.message?.includes('provider is not enabled') || 
-        error.message?.includes('Unsupported provider') ||
-        error.error_code === 'validation_failed') {
-      throw new Error('Google OAuth is not enabled in your Supabase project. Please enable Google provider in your Supabase dashboard under Authentication → Providers.');
-    }
-    
-    // Handle other OAuth errors
-    if (error.message?.includes('OAuth')) {
-      throw new Error('Google OAuth configuration error. Please check your Supabase Google OAuth settings.');
-    }
-    
-    throw error;
-  }
-};
-
 // ✅ Save generated image to Supabase table
 export const saveGeneratedImage = async (
   prompt: string, 
@@ -179,15 +93,14 @@ export const saveGeneratedImage = async (
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-  if (userError) throw userError;
-  if (!user) throw new Error('User not authenticated');
+  const currentUser = userService.getCurrentUser();
+  if (!currentUser) throw new Error('User not authenticated');
 
   try {
     // Generate unique filename
     const timestamp = Date.now();
     const randomId = Math.random().toString(36).substring(2, 15);
-    const fileName = `${user.id}/${timestamp}-${randomId}.${outputFormat}`;
+    const fileName = `${currentUser.id}/${timestamp}-${randomId}.${outputFormat}`;
     
     // Upload image to Supabase Storage and get the storage URL
     const storageImageUrl = await uploadImageToStorage(replicateImageUrl, fileName);
@@ -197,7 +110,7 @@ export const saveGeneratedImage = async (
       .from('generated_images')
       .insert([
         {
-          user_id: user.id,
+          user_id: currentUser.id,
           prompt,
           image_url: storageImageUrl, // Use storage URL instead of Replicate URL
           style,
@@ -218,7 +131,7 @@ export const saveGeneratedImage = async (
       .from('generated_images')
       .insert([
         {
-          user_id: user.id,
+          user_id: currentUser.id,
           prompt,
           image_url: replicateImageUrl, // Fallback to original URL
           style,
@@ -240,14 +153,13 @@ export const getUserImages = async () => {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-  if (userError) throw userError;
-  if (!user) throw new Error('User not authenticated');
+  const currentUser = userService.getCurrentUser();
+  if (!currentUser) throw new Error('User not authenticated');
 
   const { data, error } = await supabase
     .from('generated_images')
     .select('*')
-    .eq('user_id', user.id)
+    .eq('user_id', currentUser.id)
     .order('created_at', { ascending: false });
 
   return { data, error };

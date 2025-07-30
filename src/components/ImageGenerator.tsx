@@ -223,7 +223,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
       />
       
       {/* Desktop Sidebar - Always visible on large screens */}
-      <div className="hidden lg:block fixed left-0 top-16 h-full w-80 z-40">
+      <div className="hidden lg:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-80 z-40">
         <Sidebar
           isOpen={true}
           onClose={() => {}}
@@ -234,13 +234,13 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
         />
       </div>
       
-      <div className={`transition-all duration-300 lg:ml-80`}>
-        <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className={`transition-all duration-300 lg:ml-80 min-h-screen`}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-8">
           {/* Mobile Menu Button */}
           <div className="lg:hidden mb-6">
             <button
               onClick={() => setSidebarOpen(true)}
-              className={`flex items-center space-x-2 ${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors`}
+              className={`flex items-center space-x-2 p-2 rounded-lg ${isDark ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'} transition-colors`}
             >
               <Menu className="h-6 w-6" />
               <span>Menu</span>
@@ -248,21 +248,21 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
           </div>
 
       {/* Hero Section */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-8 lg:mb-12">
         <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
           <Zap className="h-4 w-4" />
           <span>Powered by Advanced AI</span>
         </div>
-        <h1 className="text-5xl font-bold text-gray-900 mb-4">
+        <h1 className={`text-3xl sm:text-4xl lg:text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>
           Create Stunning Images with
-          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> AI Magic</span>
+          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block sm:inline"> AI Magic</span>
         </h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        <p className={`text-lg lg:text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'} max-w-3xl mx-auto`}>
           Transform your imagination into reality. Describe what you want to see, and our AI will create it for you in seconds.
         </p>
         
         {/* Generation Counter */}
-        <div className={`mt-6 inline-flex items-center space-x-2 ${isDark ? 'bg-gray-800' : 'bg-white'} px-4 py-2 rounded-full shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+        <div className={`mt-6 inline-flex items-center space-x-2 ${isDark ? 'bg-gray-800' : 'bg-white'} px-3 lg:px-4 py-2 rounded-full shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
           <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
             Total generations: 
           </span>
@@ -273,7 +273,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
       </div>
 
       {/* Main Generator Card */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/20 mb-8">
+      <div className={`${isDark ? 'bg-gray-800/80 border-gray-700' : 'bg-white/80 border-white/20'} backdrop-blur-sm rounded-2xl lg:rounded-3xl p-4 lg:p-8 shadow-2xl border mb-6 lg:mb-8`}>
         <div className="space-y-8">
           {/* Prompt Input Section */}
           <div className="space-y-4">

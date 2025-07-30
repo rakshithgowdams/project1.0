@@ -274,18 +274,7 @@ export default function ImageHistory({ onImageSelect }: ImageHistoryProps) {
             >
               Your Library
             </button>
-            <button
-              onClick={() => {
-                setActiveTab('explore');
-                setCurrentPage(1); // Reset to first page
-              }}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-                activeTab === 'explore'
-                  ? `${isDark ? 'bg-gray-800 text-blue-400' : 'bg-white text-blue-600'} shadow-lg`
-                  : `${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'}`
-              }`}
-            >
-            </button>
+            
           </div>
         </div>
 

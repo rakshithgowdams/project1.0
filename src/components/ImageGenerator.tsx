@@ -251,7 +251,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ generatedCount, 
       <div className="text-center mb-8 lg:mb-12">
         <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
           <Zap className="h-4 w-4" />
-          <span>Powered by Advanced AI</span>
+          
         </div>
         <h1 className={`text-3xl sm:text-4xl lg:text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>
           Create Stunning Images with

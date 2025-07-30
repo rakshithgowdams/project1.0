@@ -49,7 +49,13 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
                   Go to Supabase and create a new project if you haven't already.
                 </p>
                 <a
+                  href="https://app.supabase.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                >
                   <span>Open Supabase Dashboard</span>
+                  <ExternalLink className="h-4 w-4" />
                 </a>
               </div>
             </div>
@@ -57,14 +63,14 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                 2
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Configure Authentication</h3>
+              </div>
               <div className="flex-1">
-                    In your Supabase dashboard, go to Authentication → Settings and:
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Get Your API Credentials</h3>
+                <p className="text-gray-600 mb-3">
                   From your Supabase project dashboard, go to Settings → API to find:
                 </p>
-                    <li><strong>Enable Email authentication</strong></li>
-                    <li><strong>Disable email confirmation</strong> for faster testing (optional)</li>
-                    <li><strong>Set up email templates</strong> if you want custom emails</li>
+                <ul className="list-disc list-inside text-gray-600 space-y-1">
+                  <li><strong>Project URL:</strong> Found in "Project URL" section</li>
                   <li><strong>Anon Key:</strong> Found in "Project API keys" section</li>
                 </ul>
               </div>
@@ -74,15 +80,14 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
               <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                 3
               </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Set Up Database Tables</h3>
+              <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Update Environment Variables</h3>
-                    The application will automatically create the required database tables:
+                <p className="text-gray-600 mb-3">
                   Update your <code className="bg-gray-100 px-2 py-1 rounded">.env</code> file with your Supabase credentials:
                 </p>
-                    <li><strong>generated_images:</strong> Stores AI-generated images</li>
-                    <li><strong>auth.users:</strong> Managed by Supabase Auth (automatic)</li>
-                    <li><strong>Storage bucket:</strong> For storing generated images</li>
-                    <div>VITE_SUPABASE_URL=https://your-project-id.supabase.co</div>
+                <div className="bg-gray-900 text-green-400 p-3 rounded-lg font-mono text-sm">
+                  <div>VITE_SUPABASE_URL=https://your-project-id.supabase.co</div>
+                  <div>VITE_SUPABASE_ANON_KEY=your-anon-key-here</div>
                 </div>
               </div>
             </div>
@@ -90,6 +95,23 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
                 4
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Configure Authentication</h3>
+                <p className="text-gray-600 mb-3">
+                  In your Supabase dashboard, go to Authentication → Settings and:
+                </p>
+                <ul className="list-disc list-inside text-gray-600 space-y-1">
+                  <li><strong>Enable Email authentication</strong></li>
+                  <li><strong>Disable email confirmation</strong> for faster testing (optional)</li>
+                  <li><strong>Set up email templates</strong> if you want custom emails</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
+                5
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Run Database Migrations</h3>
@@ -101,34 +123,6 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
                   <li><strong>generated_images:</strong> Stores AI-generated images</li>
                   <li><strong>auth.users:</strong> Managed by Supabase Auth (automatic)</li>
                 </ul>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
-                5
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Configure Authentication</h3>
-                <p className="text-gray-600 mb-3">
-                  In your Supabase dashboard, go to Authentication → Providers and:
-                </p>
-                <ul className="list-disc list-inside text-gray-600 space-y-1">
-                  <li>Enable Email authentication</li>
-                  <li><strong>Enable Google OAuth:</strong> Toggle on Google provider and configure OAuth credentials</li>
-                  <li>Configure redirect URLs for your domain</li>
-                </ul>
-                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                    will automatically connect to your Supabase project. Users will be able to create accounts
-                    with email/password authentication and their generated images will be stored securely.
-                  </p>
-                  <ol className="text-amber-700 text-sm mt-2 space-y-1 list-decimal list-inside">
-                    <li>Go to Authentication → Providers in your Supabase dashboard</li>
-                    <li>Enable the Google provider</li>
-                    <li>Add your Google OAuth Client ID and Secret</li>
-                    <li>Configure authorized redirect URIs</li>
-                  </ol>
-                </div>
               </div>
             </div>
           </div>
@@ -158,6 +152,5 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
         </div>
       </div>
     </div>
-  )
   );
 }

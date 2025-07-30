@@ -48,6 +48,15 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
                 <p className="text-gray-600 mb-3">
                   Go to Supabase and create a new project if you haven't already.
                 </p>
+                <a
+                  href="https://app.supabase.com/projects"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  <span>Open Supabase Dashboard</span>
+                  <ExternalLink className="h-4 w-4" />
+                </a>
               </div>
             </div>
 

@@ -84,18 +84,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
     setError('');
 
     try {
-      // Check if Google OAuth is configured from environment variables
-      const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-      const googleClientSecret = import.meta.env.VITE_GOOGLE_CLIENT_SECRET;
-      
-      console.log('Google OAuth Configuration Check:');
-      console.log('Client ID from .env:', googleClientId);
-      console.log('Client Secret configured:', googleClientSecret ? 'Yes' : 'No');
-      
-      if (!googleClientId || googleClientId === 'your_google_client_id' || !googleClientSecret || googleClientSecret === 'your_google_client_secret') {
-        throw new Error('Google OAuth is not properly configured. Please check your .env file contains VITE_GOOGLE_CLIENT_ID and VITE_GOOGLE_CLIENT_SECRET.');
-      }
-
       const { error } = await signInWithGoogle();
       if (error) throw error;
       // Note: Google sign-in will redirect, so we don't need to handle success here

@@ -133,28 +133,37 @@ export const signInWithGoogle = async () => {
     throw new Error('Supabase is not configured. Please set up your Supabase project first.');
   }
 
-  // Get Google OAuth credentials from environment variables
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-  const googleClientSecret = import.meta.env.VITE_GOOGLE_CLIENT_SECRET;
-  
-  if (!googleClientId || googleClientId === 'your_google_client_id' || !googleClientSecret || googleClientSecret === 'your_google_client_secret') {
-    throw new Error('Google OAuth is not configured. Please set VITE_GOOGLE_CLIENT_ID and VITE_GOOGLE_CLIENT_SECRET in your environment variables.');
-  }
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+        scopes: 'openid email profile',
+      }
+    });
 
-  console.log('Using Google Client ID from .env:', googleClientId);
-  console.log('Google Client Secret configured:', googleClientSecret ? 'Yes' : 'No');
-
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${window.location.origin}`,
-      queryParams: {
-        access_type: 'offline',
-        prompt: 'consent',
-      },
-      scopes: 'openid email profile',
+    if (error) throw error;
+    return { data, error };
+  } catch (error: any) {
+    // Handle specific Google OAuth provider errors
+    if (error.message?.includes('provider is not enabled') || 
+        error.message?.includes('Unsupported provider') ||
+        error.error_code === 'validation_failed') {
+      throw new Error('Google OAuth is not enabled in your Supabase project. Please enable Google provider in your Supabase dashboard under Authentication → Providers.');
     }
-  });
+    
+    // Handle other OAuth errors
+    if (error.message?.includes('OAuth')) {
+      throw new Error('Google OAuth configuration error. Please check your Supabase Google OAuth settings.');
+    }
+    
+    throw error;
+  }
+};
 
   if (error) throw error;
   return { data, error };

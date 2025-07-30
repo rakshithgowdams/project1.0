@@ -131,9 +131,20 @@ export default function SupabaseSetup({ onClose }: SupabaseSetupProps) {
                 </p>
                 <ul className="list-disc list-inside text-gray-600 space-y-1">
                   <li>Enable Email authentication</li>
-                  <li>Enable Google OAuth (optional)</li>
+                  <li><strong>Enable Google OAuth:</strong> Toggle on Google provider and configure OAuth credentials</li>
                   <li>Configure redirect URLs for your domain</li>
                 </ul>
+                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <p className="text-amber-700 text-sm font-medium">
+                    <strong>Google OAuth Setup:</strong> To enable Google sign-in, you must:
+                  </p>
+                  <ol className="text-amber-700 text-sm mt-2 space-y-1 list-decimal list-inside">
+                    <li>Go to Authentication → Providers in your Supabase dashboard</li>
+                    <li>Enable the Google provider</li>
+                    <li>Add your Google OAuth Client ID and Secret</li>
+                    <li>Configure authorized redirect URIs</li>
+                  </ol>
+                </div>
               </div>
             </div>
           </div>

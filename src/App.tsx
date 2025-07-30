@@ -39,7 +39,11 @@ function AppContent() {
         const { data: { user }, error } = await supabase.auth.getUser();
         
         if (error) {
-          console.error('Auth initialization error:', error);
+          if (error.message === 'Auth session missing!') {
+            console.info('No active session found - user not logged in');
+          } else {
+            console.error('Auth initialization error:', error);
+          }
         }
         
         setUser(user);

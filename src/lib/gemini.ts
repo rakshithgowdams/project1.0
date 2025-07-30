@@ -1,6 +1,13 @@
 // src/lib/gemini.ts
 // This file handles the Magic Prompt enhancement using MDN 1.O Advance model
 export const enhancePrompt = async (originalPrompt: string): Promise<string> => {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  
+  if (!apiKey) {
+    console.warn("Gemini API key not configured. Magic Prompt enhancement disabled.");
+    return originalPrompt;
+  }
+
   const chatHistory = [];
   chatHistory.push({
     role: "user", 
@@ -8,11 +15,6 @@ export const enhancePrompt = async (originalPrompt: string): Promise<string> => 
   });
 
   const payload = { contents: chatHistory };
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error("MDN 1.O Advance API key not configured. Please set VITE_GEMINI_API_KEY in your environment variables.");
-  }
   
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
@@ -24,16 +26,22 @@ export const enhancePrompt = async (originalPrompt: string): Promise<string> => 
     });
     const result = await response.json();
 
+    // Check for API errors
+    if (result.error) {
+      console.warn("Gemini API error:", result.error.message);
+      return originalPrompt;
+    }
+
     if (result.candidates && result.candidates.length > 0 &&
         result.candidates[0].content && result.candidates[0].content.parts &&
         result.candidates[0].content.parts.length > 0) {
       return result.candidates[0].content.parts[0].text;
     } else {
-      console.error("Unexpected API response structure for Magic Prompt enhancement:", result);
-      throw new Error("Failed to enhance prompt with MDN 1.O Advance: Invalid API response.");
+      console.warn("Unexpected API response structure for Magic Prompt enhancement:", result);
+      return originalPrompt;
     }
   } catch (error: any) {
-    console.error("Error calling MDN 1.O Advance API for Magic Prompt:", error);
-    throw new Error(`Magic Prompt Error: ${error.message || "Unknown error occurred"}`);
+    console.warn("Error calling MDN 1.O Advance API for Magic Prompt:", error);
+    return originalPrompt;
   }
 };
